@@ -15,7 +15,6 @@ env_path = cwd/'.env'
 #  load the environment variables from the file,
 #  if it exists
 if env_path.exists():
-    print('Loading environment variables from .env file')
     # open the file and read it
     with open(env_path, 'r') as env_file:
         #  read the file
@@ -34,5 +33,3 @@ if env_path.exists():
                 os.environ[key.strip()] = value.strip()
             except ValueError:
                 continue
-
-        print('Environment variables loaded')

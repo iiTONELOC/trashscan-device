@@ -2,53 +2,62 @@ import os
 import json
 import time
 import logging
+import datetime
 import requests
+import multiprocessing
+from .token_utils import write_token, is_token_expired, get_auth_token
 
-AUTH_TOKEN = None
-
-# 50 mins - tokens are good for one hour
-SESSION_LENGTH = 50 * 60
-TIME_LOGGED_IN = -1
-SESSION_EXPIRES = -1
-
-
-BARCODE_LOGGER = logging.getLogger('BARCODE')
+ERROR_LOGGER = logging.getLogger('ERROR')
 LOGGER = logging.getLogger('DEFAULT')
 
-
-def start_session():
-    # set the logged in time to the current time
-    global TIME_LOGGED_IN, SESSION_EXPIRES, SESSION_LENGTH, AUTH_TOKEN
-
-    if AUTH_TOKEN:
-        TIME_LOGGED_IN = time.time()
-        SESSION_EXPIRES = TIME_LOGGED_IN + SESSION_LENGTH
+SESSION = None
+STOP_SESSION = False
 
 
-def is_session_expired():
-    # check the current time against the session expires time
-    global SESSION_EXPIRES, TIME_LOGGED_IN, AUTH_TOKEN
+# Define the function to be executed in the background as a coroutine
 
-    if SESSION_EXPIRES == -1 or TIME_LOGGED_IN == -1:
-        return True
+def check_auth():
+    while True:
+        if is_token_expired():
+            login()
+        else:
+            # get the current token so we can get the expiration
+            current_token = get_auth_token()
+            current_exp = current_token['expires']
 
-    if not AUTH_TOKEN:
-        return True
+            # calculate the remaining time
+            #  the current_exp is a date.now timestamp
+            now = datetime.datetime.now().timestamp()
 
-    return time.time() > SESSION_EXPIRES
+            # calculate the time remaining
+            remaining = now - current_exp
+            remaining = datetime.timedelta(seconds=remaining)
+
+            # sleep for the remaining time - minutes
+            time.sleep((remaining.seconds % 3600))
+
+# Create a class to manage the background task and event loop
 
 
-def revoke_session():
-    global AUTH_TOKEN, SESSION_EXPIRES, TIME_LOGGED_IN
+class SessionManager:
+    def __init__(self):
+        self.background_process = None
 
-    AUTH_TOKEN = None
-    SESSION_EXPIRES = -1
-    TIME_LOGGED_IN = -1
+    def start(self):
+        self.background_process = multiprocessing.Process(
+            target=check_auth)
+        self.background_process.start()
+
+    def stop(self):
+        if self.background_process:
+            self.background_process.join()
+
+    def exit_handler(self):
+        self.stop()
 
 
-class LoginError(Exception):
-    """Raised when there is an error logging in"""
-    pass
+# Create an instance of the SessionManager
+session_manager = SessionManager()
 
 
 def login():
@@ -72,29 +81,20 @@ def login():
     # check for the token in the data field
     if log_in_response.status_code == 200:
         data = log_in_response.json()
-        global AUTH_TOKEN
         AUTH_TOKEN = data['data']['loginUser']['token']
 
-        LOGGER.info("LOGGED IN")
-        start_session()
+        write_token(AUTH_TOKEN)
+        LOGGER.info('LOGGED IN')
 
     elif log_in_response.status_code == 401:
-        LOGGER.error("LOGIN ERROR: 401")
-        raise LoginError()
+        ERROR_LOGGER.error('LOGIN ERROR: 401')
     else:
-        LOGGER.error("LOGIN ERROR: " + str(log_in_response.status_code))
-        raise LoginError()
-
-
-def get_auth_token() -> str:
-    global AUTH_TOKEN
-    return AUTH_TOKEN if AUTH_TOKEN else ''
+        ERROR_LOGGER.error('LOGIN ERROR: ' + str(log_in_response.status_code))
 
 
 def check_session():
-    is_expired = is_session_expired()
+    is_expired = is_token_expired()
 
     if is_expired:
-        LOGGER.info("SESSION EXPIRED - REQUESTING NEW TOKEN")
-        revoke_session()
+        LOGGER.info('SESSION EXPIRED - REQUESTING NEW TOKEN')
         login()

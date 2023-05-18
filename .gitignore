@@ -3,4 +3,5 @@ logs/
 venv/
 __pycache__/
 .vscode
-.auth
+.auth.json
+scanned_data.json

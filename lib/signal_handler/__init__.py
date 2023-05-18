@@ -11,6 +11,7 @@ class SignalHandler:
     def request_shutdown(self, *args):
         print('Stopping Trash Scan Service')
         self.shutdown_requested = True
+        exit(0)
 
     def can_run(self):
         return not self.shutdown_requested

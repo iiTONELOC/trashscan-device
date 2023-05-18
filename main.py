@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import json
+import atexit
 import logging
 import requests
 import lib.logger
@@ -9,8 +10,8 @@ import lib.write_to_scanned_json as recent_list
 from lib.graphql import MUTATIONS
 from lib.signal_handler import SignalHandler
 # from keyboard_manager import listen_system_keyboard_input
-from lib.session_manager import get_auth_token, login, check_session
-
+from lib.session_manager import login, check_session, session_manager
+from lib.session_manager.token_utils import get_auth_token
 
 LOGGER = logging.getLogger('DEFAULT')
 BARCODE_LOGGER = logging.getLogger('BARCODE')
@@ -34,12 +35,13 @@ def send_barcode(barcode):
         BARCODE_LOGGER.error('Invalid barcode: ' + barcode)
         return False
     try:
+        auth = get_auth_token() or {"token": None}
 
         response = requests.post(
             url=UPC_SERVER_URL,
             headers={
                 'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': 'Bearer ' + get_auth_token(),
+                'Authorization': 'Bearer ' + auth['token'],
             },
             data=json.dumps({
                 'operationName': MUTATIONS['ADD_ITEM']['operationName'],
@@ -94,7 +96,6 @@ def escape_ansii(string):
 
 
 def listen_for_input():
-
     keyboard_input = escape_ansii(str(input()))
 
     if keyboard_input:
@@ -103,28 +104,30 @@ def listen_for_input():
 
 
 def display_welcome_message():
-    print('Welcome to Trash Scanner!')
+    print('\nWelcome to Trash Scanner!\n')
     print(
-        'Trash Scanner is a simple tool that allows you to scan barcodes and add them to your default list in the TrashScan App.')
+        'Trash Scanner is a simple tool that allows you to scan barcodes and add them to your default list in the TrashScan App.\n')
     print('Press Ctrl+C to exit')
 
 
 def main():
     LOGGER.info('Starting the program...')
+    atexit.register(session_manager.exit_handler)
 
     try:
         login()
+        session_manager.start()
         display_welcome_message()
         print('Ready to scan...\n')
 
-        can_run = signal_handler.can_run()
-
-        while (can_run):
+        while (signal_handler.can_run()):
             listen_for_input()
-            can_run = signal_handler.can_run()
 
+        session_manager.stop()
         return close()
+
     except KeyboardInterrupt:
+        session_manager.stop()
         return close()
 
 
