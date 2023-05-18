@@ -1,6 +1,6 @@
 import os
 
-from lib._setup import PREFIX
+from _setup import PREFIX
 
 
 def run_install():

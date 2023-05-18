@@ -1,3 +1,6 @@
 .env
-logs
-
+logs/
+venv/
+__pycache__/
+.vscode
+.auth
