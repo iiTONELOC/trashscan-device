@@ -9,7 +9,6 @@ class SignalHandler:
         signal.signal(signal.SIGTERM, self.request_shutdown)
 
     def request_shutdown(self, *args):
-        print('Stopping Trash Scan Service')
         self.shutdown_requested = True
         exit(0)
 

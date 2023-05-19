@@ -10,7 +10,7 @@ def add_recent_product(barcode_data: json) -> None:
         barcode_data (json): Returned barcode data from the server
     """
     CWD = str(Path(__file__).parent.parent.parent)
-    SCANNED_FOLDER = CWD + '/scanned'
+    SCANNED_FOLDER = CWD + '/lib/server/public/scanned'
     JSON_FILE = SCANNED_FOLDER + '/scanned_data.json'
 
     FILE_CONTENTS: json = {}

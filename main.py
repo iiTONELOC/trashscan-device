@@ -7,16 +7,19 @@ import logging
 import requests
 import lib.logger
 import lib.write_to_scanned_json as recent_list
+
 from lib.graphql import MUTATIONS
+from lib.server import server_manager
 from lib.signal_handler import SignalHandler
-# from keyboard_manager import listen_system_keyboard_input
-from lib.session_manager import login, check_session, session_manager
 from lib.session_manager.token_utils import get_auth_token
+from lib.session_manager import login, check_session, session_manager
+
+
+UPC_SERVER_URL = os.environ['UPC_SERVER']
 
 LOGGER = logging.getLogger('DEFAULT')
-BARCODE_LOGGER = logging.getLogger('BARCODE')
 ERROR_LOGGER = logging.getLogger('ERROR')
-UPC_SERVER_URL = os.environ['UPC_SERVER']
+BARCODE_LOGGER = logging.getLogger('BARCODE')
 
 signal_handler = SignalHandler()
 
@@ -50,28 +53,37 @@ def send_barcode(barcode):
             }),
         )
 
+        print(response)
+        print(response.text)
+        print(response.json())
+
         code: int = response.status_code
         text: str = response.text or 'No response text'
 
         if code == 200:
             print('\nBarcode sent')
 
-            json_text: json = response.json()
-            product: json = json_text['data']['addItemToDefaultList']['product']
+            try:
+                json_text: json = response.json()
+                product: json = json_text['data']['addItemToDefaultList']['product']
 
-            if product != None:
-                recent_list.add_recent_product(product)
-                product = json.dumps(product, indent=4)
+                if product != None:
+                    recent_list.add_recent_product(product)
+                    product = json.dumps(product, indent=4)
 
-                print('\nBarcode data:')
-                print(product)
-                print('Waiting for next barcode...\n')
-            else:
-                print('No product information was found for barcode: ' + barcode)
+                    print('\nBarcode data:')
+                    print(product)
+                    print('Waiting for next barcode...\n')
+                else:
+                    print('No product information was found for barcode: ' + barcode)
 
-            BARCODE_LOGGER.info(
-                f'Sent barcode: {barcode} to the default list')
-            return True
+                BARCODE_LOGGER.info(
+                    f'Sent barcode: {barcode} to the default list')
+                return True
+            except Exception as e:
+                print(e)
+                BARCODE_LOGGER.error('ERROR SENDING BARCODE')
+                return False
         else:
             print('\nBarcode not sent')
             LOGGER.info(f'Barcode not sent \
@@ -82,10 +94,10 @@ def send_barcode(barcode):
             ERROR_LOGGER.error(f'ERROR SENDING BARCODE: {response.json()}')
             return False
     except Exception as e:
-        print(response.json())
+
         print("ERROR SENDING BARCODE")
         print(e)
-        ERROR_LOGGER.error(f'ERROR SENDING BARCODE: {e}, {response.json()}')
+        ERROR_LOGGER.error(f'ERROR SENDING BARCODE: {e}')
         return False
 
 
@@ -113,21 +125,30 @@ def display_welcome_message():
 def main():
     LOGGER.info('Starting the program...')
     atexit.register(session_manager.exit_handler)
+    atexit.register(server_manager.exit_handler)
+
+    def start_background_services():
+        session_manager.start()
+        server_manager.start()
+
+    def stop_background_services():
+        session_manager.stop()
+        server_manager.stop()
 
     try:
         login()
-        session_manager.start()
+        start_background_services()
         display_welcome_message()
         print('Ready to scan...\n')
 
         while (signal_handler.can_run()):
             listen_for_input()
 
-        session_manager.stop()
+        stop_background_services()
         return close()
 
     except KeyboardInterrupt:
-        session_manager.stop()
+        stop_background_services()
         return close()
 
 
