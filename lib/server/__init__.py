@@ -16,7 +16,12 @@ def open_url(url):
     #     ['sudo', '-b', '-u', ROOT_USER, 'xdg-open', '--browser',
     #      'chromium-browser', url],
     #     start_new_session=True)
-    subprocess.Popen(['midori', '-e', 'Fullscreen', '-a', url],start_new_session=True)
+    # subprocess.Popen(
+    #     ['sudo', '-b', '-u', ROOT_USER, 'xdg-open', url],
+    #     start_new_session=True)
+    subprocess.Popen(['midori', '-e', 'Fullscreen',
+                     '-a', url], start_new_session=True)
+
 
 logging.getLogger().handlers = [logging.NullHandler()]
 
