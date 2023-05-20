@@ -1,4 +1,5 @@
 import os
+import json
 
 # check if linux
 
@@ -29,6 +30,17 @@ def install_requirements():
     return True
 
 
+def create_scanned_data_json():
+    json_data = {"recentlyScanned": []}
+
+    #  only if the file doesn't exist
+    file = 'lib/server/public/scanned/scanned_data.json'
+
+    if not os.path.exists(file):
+        with open('lib/server/public/scanned/scanned_data.json', 'w') as json_file:
+            json.dump(json_data, json_file)
+
+
 def run_setup():
     have_pip = is_pip_installed()
     if not have_pip:
@@ -37,6 +49,7 @@ def run_setup():
     print('Setting up the trash scanner...')
     update_pip()
     install_requirements()
+    create_scanned_data_json()
     print('Setup complete!')
 
 
