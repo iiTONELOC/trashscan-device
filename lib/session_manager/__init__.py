@@ -74,8 +74,7 @@ def login():
             'operationName': 'login',
             'query': 'mutation login($username: String!, $password: String!) {loginUser(username: $username, password: $password) {token user { _id  email username } }}',
             'variables': {'username': os.environ['TRASH_USER'], 'password': os.environ['PASS']},
-        }),
-        verify=False
+        })
     )
 
     # check for the token in the data field

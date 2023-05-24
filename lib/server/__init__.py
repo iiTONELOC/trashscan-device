@@ -1,138 +1,151 @@
 import os
+import json
 import logging
-import http.server
-import socketserver
-import multiprocessing
 import subprocess
+import multiprocessing
+from flask import Flask, render_template
+from datetime import datetime, timedelta
+from lib.write_to_scanned_json import SCANNED_FOLDER, JSON_FILE
 
-
+ENVIRONMENT = 'Production' if os.environ['PRODUCTION'] == 'true' else 'Development'
 ROOT_USER = os.environ['ROOT_USER'] or ''
-
-
-def open_url(url):
-    global open_browser
-
-    # subprocess.Popen(
-    #     ['sudo', '-b', '-u', ROOT_USER, 'xdg-open', '--browser',
-    #      'chromium-browser', url],
-    #     start_new_session=True)
-    # subprocess.Popen(
-    #     ['sudo', '-b', '-u', ROOT_USER, 'xdg-open', url],
-    #     start_new_session=True)
-    subprocess.Popen(['midori', '-e', 'Fullscreen',
-                     '-a', url], start_new_session=True)
-
-
 logging.getLogger().handlers = [logging.NullHandler()]
 
 
-class SimpleServer:
-    def __init__(self,  port=8000):
-        self.port = port
-        self.handler = None
-        self.server = None
+app = Flask(__name__)
+PORT = 5000
+# Allow access over the network only if the environment is in Development, otherwise
+# The App should only be accessible locally
+HOST = 'localhost' if ENVIRONMENT == 'Production' else '0.0.0.0'
 
-    def start_server(self):
-        if self.server:
-            print("Server is already running.")
-            return
+num_products = 0
 
-        self.handler = CustomRequestHandler
 
-        self.server = socketserver.TCPServer(("", self.port), self.handler)
-        print(f"Server listening on port {self.port}")
+@app.route("/")
+def index():
+    recently_scanned = package_data(get_scanned_data())
 
-        try:
-            self.server.serve_forever()
-        except KeyboardInterrupt:
-            self.stop_server()
+    global num_products
 
-    def stop_server(self):
-        if self.server:
-            self.server.shutdown()
-            self.server.server_close()
-            self.server = None
-            print("Server stopped.")
+    num_products = len(recently_scanned['recentlyScanned'])
+    return render_template('index.html', **recently_scanned)
+
+
+@app.route("/api/has-update")
+def has_update():
+    recently_scanned = package_data(get_scanned_data())
+    return json.dumps({'shouldUpdate': len(recently_scanned['recentlyScanned']) != num_products})
+
+
+@app.route("/api/get-update")
+def get_update():
+    recently_scanned = package_data(get_scanned_data())
+    return json.dumps(recently_scanned)
+
+
+# Look for the scanned folder in the user's Documents folder
+if not os.path.exists(SCANNED_FOLDER):
+    os.makedirs(SCANNED_FOLDER)
+
+# Look for the JSON file in the scanned folder
+if not os.path.exists(JSON_FILE):
+    # If the JSON file does not exist, create it
+    with open(JSON_FILE, 'w') as f:
+        json.dump({"recentlyScanned": []}, f)
+
+
+def open_browser():
+    subprocess.Popen(['midori', '-e', 'Fullscreen',
+                     '-a', f'http://localhost:{PORT}'], start_new_session=True)
+
+
+def get_scanned_data():
+    # Read the JSON file
+    with open(JSON_FILE) as f:
+        data = json.load(f)
+    return data
+
+
+def format_created_at(date):
+    # Show the date as "time ago" if the date is less than 24 hours ago
+    # If it is more than 24 hours ago, show the date as a formatted string
+    time_now = datetime.now()
+    date_time = datetime.fromisoformat(date)
+    time_diff = time_now - date_time
+    _24_hours = timedelta(days=1)
+
+    if time_diff < _24_hours:
+        # Show "time ago"
+        hours = time_diff // timedelta(hours=1)
+        mins = time_diff // timedelta(minutes=1)
+        seconds = time_diff // timedelta(seconds=1)
+        time_ago = ""
+
+        if hours > 0:
+            time_ago += f"{hours} {'hours' if hours > 1 else 'hour'} ago"
+        elif mins > 0:
+            time_ago += f"{mins} {'minutes' if mins > 1 else 'minute'} ago"
         else:
-            print("Server is not running.")
+            time_ago += f"{seconds} {'seconds' if seconds > 1 else 'second'} ago"
+
+        return time_ago
+    else:
+        # Show formatted date
+        return date_time.strftime("%b %d, %Y %I:%M %p")
 
 
-class CustomRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def log_message(self, format, *args):
-        pass
+def package_data(data):
+    temp = []
+    for product in data['recentlyScanned']:
+        data = {
+            'id': product['_id'],
+            'name': product['productAlias'] or product['productData']['name'],
+            'barcode': product['productData']['barcode'][0],
+            'createdAt': format_created_at(product['addedAt']),
+            'headerClass': 'card-header'
+        }
 
-    def translate_path(self, path):
-        try:
-            """Translate a given path to the corresponding path in the public folder."""
-            public_path = os.path.abspath(self.directory)
-            requested_path = os.path.normpath(path.lstrip('/'))
-            full_path = os.path.join(
-                public_path,
-                'lib',
-                'server',
-                'public',
-                requested_path)
+        if data['name'] == 'Product not found':
+            data['headerClass'] = "card-header not-found"
 
-            if requested_path == "index.html" or \
-                "assets/" in requested_path or\
-                    requested_path == "scanned/scanned_data.json":
-                if not os.path.exists(full_path):
-                    raise FileNotFoundError
-                else:
-                    return full_path
+        temp.append(data)
 
-            else:
-                raise ValueError
-        except Exception:
-            raise ValueError
-
-    def do_GET(self):
-        try:
-            if self.path == '/':
-                self.path = '/index.html'  # Serve index.html for the root path
-            super().do_GET()
-        except Exception:
-            self.send_error(400, "Bad Request")
-
-    if os.getenv('PRODUCTION', False) == False \
-            or os.getenv('PRODUCTION', False) == 'False':
-
-        def end_headers(self):
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
-            super().end_headers()
-
-        def do_OPTIONS(self):
-            self.send_response(200)
-            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-            self.send_header("Content-Length", "0")
-            self.end_headers()
+    # Reverse the list so the most recent scan is at the top
+    temp.reverse()
+    return {'recentlyScanned': temp}
 
 
 class ServerManager:
     def __init__(self):
-        self.background_process = None
+        self.process = None
 
-    def start(self):
-        self.background_process = multiprocessing.Process(
-            target=start_server)
-        self.background_process.start()
+    def start_server(self):
+        if self.process is not None:
+            print("Server is already running.")
+            return
 
-    def stop(self):
-        if self.background_process:
-            self.background_process.join()
+        self.process = multiprocessing.Process(target=self._run_server)
+        self.process.start()
+        print("Server started.")
+
+    def stop_server(self):
+        if self.process is not None:
+            self.process.terminate()
+            self.process.join()
+            self.process = None
+            print("Server stopped.")
+        else:
+            print("Server is not running.")
 
     def exit_handler(self):
-        self.stop()
+        self.stop_server()
+
+    def _run_server(self):
+        app.run(host=HOST, port=PORT)
 
 
-server_manager = ServerManager()
+if __name__ == "__main__":
+    server_manager = ServerManager()
 
-
-def start_server():
-    # launch a browser window
-    open_url('http://localhost:8000')
-    while True:
-        server = SimpleServer(port=8000)
-        server.start_server()
+    # Start the server in a separate process
+    server_manager.start_server()

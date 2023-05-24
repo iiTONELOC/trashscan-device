@@ -17,10 +17,6 @@
     --gray: #2d343f;
 
     --error: #d60202;
-    --success: #09a52e;
-    --warning: #ff9f1a;
-    --info: #1bc2ff;
-
 
     --margin: 1rem;
     --padding: 1rem;
@@ -48,7 +44,7 @@ body {
 
 main {
     width: 100%;
-    height: 95vh;
+    height: 99.8vh;
     display: flex;
     flex-flow: column;
     justify-content: flex-start;
@@ -59,7 +55,10 @@ main {
 
 
 .text-shadow {
-    text-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.9);
+    text-shadow: 1px 1px 0 black,
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px 1px 0 black;
 }
 
 .header {
@@ -74,7 +73,7 @@ main {
     height: auto;
     display: flex;
     flex-flow: column;
-    background-color: var(--quaternary-color);
+    background-color: var(--primary-color);
     justify-content: flex-start;
     align-items: center;
     gap: 15px;
@@ -82,12 +81,13 @@ main {
 }
 
 .card {
-    background-color: #383c42;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
     box-shadow: 0 2px 5px rgba(192, 191, 191, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* For Safari */
     width: 75vw;
     margin-top: 15px;
 }
@@ -95,8 +95,7 @@ main {
 .card:first-child {
     margin-top: 25px;
     margin-bottom: 95px;
-    /* create a border that sits on the outside of the card */
-    border-top: 5px solid var(--primary-accent);
+    scale: 1.05;
 }
 
 .card:last-child {
@@ -111,8 +110,8 @@ main {
     justify-content: center;
     text-align: center;
     padding: 5px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
 }
 
 .card-title {
@@ -137,23 +136,80 @@ main {
 
 .not-found {
     background-color: var(--error);
+    border-top: 5px solid rgb(255, 27, 27)-- !important;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (max-width: 600px) {
+    .list-container {
+        padding: var(--padding)
+    }
+
     .card {
-        width: 50vw;
+        width: 85vw;
+    }
+
+    /* .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-description {
+        font-size: 1rem;
+    }
+
+    .card-created-at {
+        font-size: 1rem
+    } */
+}
+
+
+
+/* @media screen and (max-width: 600px) {
+    .list-container {
+        padding: var(--padding)
+    }
+
+    .card {
+        width: 95vw;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-description {
+        font-size: 1rem;
+    }
+
+    .card-created-at {
+        font-size: 1rem
     }
 }
 
-@media screen and (min-width: 1024px) {
-    .card {
-        width: 50vw;
+@media screen and (max-width: 675px) {
+    .list-container {
+        padding: var(--padding)
     }
-}
 
+    .card {
+        width: 80vw;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-description {
+        font-size: 1rem;
+    }
+
+    .card-created-at {
+        font-size: 1rem
+    }
+} */
+/* 
 @media screen and (max-width: 769px) {
     .card {
-        width: 60vw;
+        width: 70vw;
     }
 
     .card-title {
@@ -167,26 +223,32 @@ main {
     .card-created-at {
         font-size: 0.75rem
     }
+} */
+
+
+
+
+@media screen and (min-width: 768px) {
+    .card {
+        width: 65vw;
+    }
 }
 
-@media screen and (max-width: 425px) {
-    .list-container {
-        padding: var(--padding)
-    }
 
+@media screen and (min-width: 900px) {
     .card {
-        width: 90vw;
+        width: 50vw;
     }
+}
 
-    .card-title {
-        font-size: 1.2rem;
+@media screen and (min-width: 1150px) {
+    .card {
+        width: 40vw;
     }
+}
 
-    .card-description {
-        font-size: 1rem;
-    }
-
-    .card-created-at {
-        font-size: 1rem
+@media screen and (min-width: 1500px) {
+    .card {
+        width: 30vw;
     }
 }

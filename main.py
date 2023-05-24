@@ -9,7 +9,8 @@ import lib.logger
 import lib.write_to_scanned_json as recent_list
 
 from lib.graphql import MUTATIONS
-from lib.server import server_manager
+
+from lib.server import ServerManager, open_browser
 from lib.signal_handler import SignalHandler
 from lib.session_manager.token_utils import get_auth_token
 from lib.session_manager import login, check_session, session_manager
@@ -53,10 +54,6 @@ def send_barcode(barcode):
             }),
         )
 
-        print(response)
-        print(response.text)
-        print(response.json())
-
         code: int = response.status_code
         text: str = response.text or 'No response text'
 
@@ -71,8 +68,6 @@ def send_barcode(barcode):
                     recent_list.add_recent_product(product)
                     product = json.dumps(product, indent=4)
 
-                    print('\nBarcode data:')
-                    print(product)
                     print('Waiting for next barcode...\n')
                 else:
                     print('No product information was found for barcode: ' + barcode)
@@ -123,13 +118,15 @@ def display_welcome_message():
 
 
 def main():
+    server_manager = ServerManager()
     LOGGER.info('Starting the program...')
     atexit.register(session_manager.exit_handler)
     atexit.register(server_manager.exit_handler)
 
     def start_background_services():
         session_manager.start()
-        server_manager.start()
+        server_manager.start_server()
+        open_browser()
 
     def stop_background_services():
         session_manager.stop()
