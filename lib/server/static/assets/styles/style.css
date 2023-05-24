@@ -93,9 +93,33 @@ main {
 }
 
 .card:first-child {
-    margin-top: 25px;
+    margin-top: 55px;
     margin-bottom: 95px;
-    scale: 1.05;
+    scale: 1.08;
+    position: relative;
+}
+
+.card:first-child::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    background-size: 800% 100%;
+    z-index: -1;
+    animation: laser-scan 8s linear infinite;
+}
+
+@keyframes laser-scan {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
 }
 
 .card:last-child {
