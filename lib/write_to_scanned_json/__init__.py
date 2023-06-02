@@ -3,7 +3,8 @@ import json
 import datetime
 from pathlib import Path
 
-SCANNED_FOLDER = f'/home/{os.environ["ROOT_USER"]}/Documents/scanned'
+ROOT = os.path.expanduser('~')
+SCANNED_FOLDER = f'{ROOT}/Documents/scanned'
 JSON_FILE = SCANNED_FOLDER + '/scanned_data.json'
 
 
@@ -14,8 +15,9 @@ def write_to_json(barcode_data: json) -> None:
 
 def add_recent_product(barcode_data: dict) -> None:
 
-    print('Adding recent product')
-    print(barcode_data)
+    print('\nAdding product: ')
+    print(json.dumps(barcode_data, indent=4))
+    print('')
 
     barcode_data['addedAt'] = datetime.datetime.now().isoformat()
 

@@ -13,6 +13,7 @@ from lib.graphql import MUTATIONS
 from lib.server import ServerManager, open_browser
 from lib.signal_handler import SignalHandler
 from lib.session_manager.token_utils import get_auth_token
+from lib.keyboard_manager import listen_system_keyboard_input
 from lib.session_manager import login, check_session, session_manager
 
 
@@ -103,11 +104,18 @@ def escape_ansii(string):
 
 
 def listen_for_input():
-    keyboard_input = escape_ansii(str(input()))
+    # keyboard_input = escape_ansii(str(input()))
 
-    if keyboard_input:
-        check_session()
-        send_barcode(keyboard_input.strip())
+    # if keyboard_input:
+    #     check_session()
+    #     send_barcode(keyboard_input.strip())
+
+    def _action(data):
+        # print("Keyboard _action")
+        # print('Incoming data: ', data)
+        send_barcode(data)
+
+    listen_system_keyboard_input(_action)
 
 
 def display_welcome_message():

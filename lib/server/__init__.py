@@ -8,12 +8,11 @@ from datetime import datetime, timedelta
 from lib.write_to_scanned_json import SCANNED_FOLDER, JSON_FILE
 
 ENVIRONMENT = 'Production' if os.environ['PRODUCTION'] == 'true' else 'Development'
-ROOT_USER = os.environ['ROOT_USER'] or ''
 logging.getLogger().handlers = [logging.NullHandler()]
 
 
 app = Flask(__name__)
-PORT = 5000
+PORT = 9000
 # Allow access over the network only if the environment is in Development, otherwise
 # The App should only be accessible locally
 HOST = 'localhost' if ENVIRONMENT == 'Production' else '0.0.0.0'
@@ -55,8 +54,8 @@ if not os.path.exists(JSON_FILE):
 
 
 def open_browser():
-    subprocess.Popen(['midori', '-e', 'Fullscreen',
-                     '-a', f'http://localhost:{PORT}'], start_new_session=True)
+    subprocess.Popen(
+        ['sudo', '-u', 'odroid', 'firefox', '--kiosk', f'http://localhost:{PORT}'], start_new_session=True)
 
 
 def get_scanned_data():

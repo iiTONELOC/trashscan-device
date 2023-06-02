@@ -1,10 +1,6 @@
 import os
 
-
-# check if linux
-
 PREFIX = 'python3' if os.name == 'posix' else 'python'
-# PIP install, update
 
 
 def is_pip_installed():
@@ -38,6 +34,7 @@ def run_setup():
     print('Setting up the trash scanner...')
     update_pip()
     install_requirements()
+    # prep_usb_scanner()
     print('Setup complete!')
 
 
