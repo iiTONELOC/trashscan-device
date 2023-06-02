@@ -104,18 +104,18 @@ def escape_ansii(string):
 
 
 def listen_for_input():
-    # keyboard_input = escape_ansii(str(input()))
+    keyboard_input = escape_ansii(str(input()))
 
-    # if keyboard_input:
-    #     check_session()
-    #     send_barcode(keyboard_input.strip())
+    if keyboard_input:
+        check_session()
+        send_barcode(keyboard_input.strip())
 
-    def _action(data):
-        # print("Keyboard _action")
-        # print('Incoming data: ', data)
-        send_barcode(data)
+    # def _action(data):
+    #     # print("Keyboard _action")
+    #     # print('Incoming data: ', data)
+    #     send_barcode(data)
 
-    listen_system_keyboard_input(_action)
+    # listen_system_keyboard_input(_action)
 
 
 def display_welcome_message():

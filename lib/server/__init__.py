@@ -3,7 +3,7 @@ import json
 import logging
 import subprocess
 import multiprocessing
-from flask import Flask, render_template
+from flask import Flask, send_from_directory
 from datetime import datetime, timedelta
 from lib.write_to_scanned_json import SCANNED_FOLDER, JSON_FILE
 
@@ -11,23 +11,54 @@ ENVIRONMENT = 'Production' if os.environ['PRODUCTION'] == 'true' else 'Developme
 logging.getLogger().handlers = [logging.NullHandler()]
 
 
+# need to get the cwd to be the grand parent directory of this file
+# so that the static files can be served
+CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATIC = os.path.normpath(os.path.join(CWD, 'client/dist'))
+
+print('CWD: ', CWD)
+print('STATIC: ', STATIC)
+
 app = Flask(__name__)
 PORT = 9000
 # Allow access over the network only if the environment is in Development, otherwise
 # The App should only be accessible locally
 HOST = 'localhost' if ENVIRONMENT == 'Production' else '0.0.0.0'
 
-num_products = 0
+
+def get_scanned_data():
+    # Read the JSON file
+    with open(JSON_FILE) as f:
+        data = json.load(f)
+    return data
 
 
-@app.route("/")
-def index():
-    recently_scanned = package_data(get_scanned_data())
+num_products = len(get_scanned_data()['recentlyScanned']) or 0
 
-    global num_products
 
-    num_products = len(recently_scanned['recentlyScanned'])
-    return render_template('index.html', **recently_scanned)
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(STATIC, path)):
+        if path.endswith('.js'):
+            return send_from_directory(STATIC, path, mimetype='text/javascript')
+        elif path.endswith('.css'):
+            return send_from_directory(STATIC, path, mimetype='text/css')
+        elif path.endswith('.png'):
+            return send_from_directory(STATIC, path, mimetype='image/png')
+        elif path.endswith('.jpg'):
+            return send_from_directory(STATIC, path, mimetype='image/jpg')
+        elif path.endswith('.svg'):
+            return send_from_directory(STATIC, path, mimetype='image/svg+xml')
+        elif path.endswith('.ico'):
+            return send_from_directory(STATIC, path, mimetype='image/x-icon')
+        elif path.endswith('.map'):
+            return send_from_directory(STATIC, path, mimetype='application/json')
+        else:
+            return send_from_directory(STATIC, path)
+    else:
+        return send_from_directory(STATIC, "index.html")
 
 
 @app.route("/api/has-update")
@@ -39,6 +70,10 @@ def has_update():
 @app.route("/api/get-update")
 def get_update():
     recently_scanned = package_data(get_scanned_data())
+
+    global num_products
+    num_products = len(recently_scanned['recentlyScanned'])
+
     return json.dumps(recently_scanned)
 
 
@@ -56,13 +91,6 @@ if not os.path.exists(JSON_FILE):
 def open_browser():
     subprocess.Popen(
         ['sudo', '-u', 'odroid', 'firefox', '--kiosk', f'http://localhost:{PORT}'], start_new_session=True)
-
-
-def get_scanned_data():
-    # Read the JSON file
-    with open(JSON_FILE) as f:
-        data = json.load(f)
-    return data
 
 
 def format_created_at(date):

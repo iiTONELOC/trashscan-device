@@ -1,7 +1,17 @@
+# Environment
 .env*
 logs/
-venv/
-__pycache__/
 .vscode
-.auth.json
 scanned_data.json
+
+# Auth
+.auth.json
+
+# Python 
+__pycache__/
+venv/
+
+# Node, Client UI
+node_modules/
+.parcel-cache/
+dist/
