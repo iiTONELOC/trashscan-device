@@ -1,12 +1,12 @@
 import React from 'react';
-import { SocketProvider, ConnectionState } from './components';
+import { SocketProvider, Header } from './components';
 
 
 
 export function App() {
     return (
         <SocketProvider>
-            <ConnectionState />
+            <Header />
             <h1>Hello World</h1>
         </SocketProvider>
     )

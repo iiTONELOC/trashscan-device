@@ -6,13 +6,11 @@ import atexit
 import logging
 import requests
 import lib.logger
+import subprocess
 import lib.write_to_scanned_json as recent_list
 
 from lib.graphql import MUTATIONS
-
-from lib.server import server_manager
 from lib.signal_handler import SignalHandler
-from lib.server.server_utils import open_browser
 from lib.session_manager.token_utils import get_auth_token
 from lib.keyboard_manager import listen_system_keyboard_input
 from lib.session_manager import login, check_session, session_manager
@@ -68,6 +66,16 @@ def send_barcode(barcode):
 
                 if product != None:
                     recent_list.add_recent_product(product)
+                    requests.post(
+                        url='http://localhost:9000/api/newly-scanned',
+                        headers={
+                            'Content-Type': 'application/json; charset=utf-8',
+                        },
+                        data=json.dumps({
+                            'barcodeData': product
+                        }),
+                    )
+
                     product = json.dumps(product, indent=4)
 
                     print('Waiting for next barcode...\n')
@@ -128,16 +136,14 @@ def display_welcome_message():
 def main():
     LOGGER.info('Starting the program...')
     atexit.register(session_manager.exit_handler)
-    atexit.register(server_manager.exit_handler)
 
     def start_background_services():
         session_manager.start()
-        server_manager.start_server()
-        open_browser()
+        subprocess.Popen(
+            ['sudo', '-u', 'odroid', 'firefox', '--kiosk', 'http://localhost:9000'], start_new_session=True)
 
     def stop_background_services():
         session_manager.stop()
-        server_manager.stop()
 
     try:
         login()

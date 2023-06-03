@@ -1,9 +1,8 @@
+import './Header.css';
+import { ConnectionState } from '../socketIO';
 import React, { useState, useEffect } from 'react';
-import './ConnectionState.css'; // Import the CSS file
-import { useSocketContext, ISocketContext } from '../SocketProvider';
 
-export function ConnectionState() {
-    const { isConnected }: ISocketContext = useSocketContext();
+export function Header(): React.ReactElement {
     const [currentTime, setCurrentTime] = useState<string>(
         new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
@@ -12,7 +11,13 @@ export function ConnectionState() {
         })
     );
     const [currentDate, setCurrentDate] = useState<string>(
-        new Date().toLocaleDateString('en-US')
+        // format the date as Day of the Week, Month, Year
+        new Date().toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: '2-digit'
+        })
     );
 
     useEffect(() => {
@@ -47,13 +52,8 @@ export function ConnectionState() {
     return (
         <div className="header">
             <p>{currentDate}</p>
-            <p>{currentTime}</p>
-
-            <div className='status'>
-                <p>{isConnected ? 'Online' : 'Offline'}</p>
-                <span className={`status-circle ${isConnected ? 'online' : 'offline'}`} />
-            </div>
-
+            <p className='current-time'>{currentTime}</p>
+            <ConnectionState />
         </div>
     );
 }
