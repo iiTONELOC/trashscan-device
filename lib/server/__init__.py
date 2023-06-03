@@ -1,66 +1,43 @@
 import os
 import json
 import logging
-import subprocess
 import multiprocessing
+from flask_socketio import SocketIO
 from flask import Flask, send_from_directory
-from datetime import datetime, timedelta
-from lib.write_to_scanned_json import SCANNED_FOLDER, JSON_FILE
+from lib.server.server_constants import HOST, STATIC, PORT, MIME_TYPES, PORT
+from lib.server.server_utils import get_scanned_data, package_data, create_needed_folders
 
-ENVIRONMENT = 'Production' if os.environ['PRODUCTION'] == 'true' else 'Development'
+
 logging.getLogger().handlers = [logging.NullHandler()]
 
-
-# need to get the cwd to be the grand parent directory of this file
-# so that the static files can be served
-CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-STATIC = os.path.normpath(os.path.join(CWD, 'client/dist'))
-
-print('CWD: ', CWD)
-print('STATIC: ', STATIC)
-
+# create the Flask app
 app = Flask(__name__)
-PORT = 9000
-# Allow access over the network only if the environment is in Development, otherwise
-# The App should only be accessible locally
-HOST = 'localhost' if ENVIRONMENT == 'Production' else '0.0.0.0'
 
-
-def get_scanned_data():
-    # Read the JSON file
-    with open(JSON_FILE) as f:
-        data = json.load(f)
-    return data
-
-
+# configure SocketIO
+app.config['SECRET_KEY'] = os.environ['SOCKET_SECRET']
+socket_io = SocketIO(app)
+# track the number of products scanned
 num_products = len(get_scanned_data()['recentlyScanned']) or 0
 
+# create the folders needed for the server to function properly
+create_needed_folders()
 
+
+############## ROUTES ##############
+
+#  REACT APP
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     if path != "" and os.path.exists(os.path.join(STATIC, path)):
-        if path.endswith('.js'):
-            return send_from_directory(STATIC, path, mimetype='text/javascript')
-        elif path.endswith('.css'):
-            return send_from_directory(STATIC, path, mimetype='text/css')
-        elif path.endswith('.png'):
-            return send_from_directory(STATIC, path, mimetype='image/png')
-        elif path.endswith('.jpg'):
-            return send_from_directory(STATIC, path, mimetype='image/jpg')
-        elif path.endswith('.svg'):
-            return send_from_directory(STATIC, path, mimetype='image/svg+xml')
-        elif path.endswith('.ico'):
-            return send_from_directory(STATIC, path, mimetype='image/x-icon')
-        elif path.endswith('.map'):
-            return send_from_directory(STATIC, path, mimetype='application/json')
-        else:
-            return send_from_directory(STATIC, path)
+        file_extension = os.path.splitext(path)[1]
+        mimetype = MIME_TYPES.get(file_extension, None)
+        return send_from_directory(STATIC, path, mimetype=mimetype)
     else:
         return send_from_directory(STATIC, "index.html")
 
 
+#  API ENDPOINTS
 @app.route("/api/has-update")
 def has_update():
     recently_scanned = package_data(get_scanned_data())
@@ -77,71 +54,27 @@ def get_update():
     return json.dumps(recently_scanned)
 
 
-# Look for the scanned folder in the user's Documents folder
-if not os.path.exists(SCANNED_FOLDER):
-    os.makedirs(SCANNED_FOLDER)
+############## SOCKET IO ##############
 
-# Look for the JSON file in the scanned folder
-if not os.path.exists(JSON_FILE):
-    # If the JSON file does not exist, create it
-    with open(JSON_FILE, 'w') as f:
-        json.dump({"recentlyScanned": []}, f)
+@socket_io.on('client connected')
+def handle_connect():
+    print('Client connected')
 
 
-def open_browser():
-    subprocess.Popen(
-        ['sudo', '-u', 'odroid', 'firefox', '--kiosk', f'http://localhost:{PORT}'], start_new_session=True)
+@socket_io.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 
 
-def format_created_at(date):
-    # Show the date as "time ago" if the date is less than 24 hours ago
-    # If it is more than 24 hours ago, show the date as a formatted string
-    time_now = datetime.now()
-    date_time = datetime.fromisoformat(date)
-    time_diff = time_now - date_time
-    _24_hours = timedelta(days=1)
-
-    if time_diff < _24_hours:
-        # Show "time ago"
-        hours = time_diff // timedelta(hours=1)
-        mins = time_diff // timedelta(minutes=1)
-        seconds = time_diff // timedelta(seconds=1)
-        time_ago = ""
-
-        if hours > 0:
-            time_ago += f"{hours} {'hours' if hours > 1 else 'hour'} ago"
-        elif mins > 0:
-            time_ago += f"{mins} {'minutes' if mins > 1 else 'minute'} ago"
-        else:
-            time_ago += f"{seconds} {'seconds' if seconds > 1 else 'second'} ago"
-
-        return time_ago
-    else:
-        # Show formatted date
-        return date_time.strftime("%b %d, %Y %I:%M %p")
+@socket_io.on('message_from_client')
+def handle_message_from_client(message):
+    print('Received message from client:', message)
+    # You can process the message here and send updates to the client if needed
+    # Emit an event to all connected clients
+    socket_io.emit('message_from_server', 'This is a message from the server')
 
 
-def package_data(data):
-    temp = []
-    for product in data['recentlyScanned']:
-        data = {
-            'id': product['_id'],
-            'name': product['productAlias'] or product['productData']['name'],
-            'barcode': product['productData']['barcode'][0],
-            'createdAt': format_created_at(product['addedAt']),
-            'headerClass': 'card-header'
-        }
-
-        if data['name'] == 'Product not found':
-            data['headerClass'] = "card-header not-found"
-
-        temp.append(data)
-
-    # Reverse the list so the most recent scan is at the top
-    temp.reverse()
-    return {'recentlyScanned': temp}
-
-
+# _______ Exposed Server API _______
 class ServerManager:
     def __init__(self):
         self.process = None
@@ -168,9 +101,11 @@ class ServerManager:
         self.stop_server()
 
     def _run_server(self):
-        app.run(host=HOST, port=PORT)
+        socket_io.run(app, host=HOST, port=PORT)
 
 
+# Starts the server in a separate process if this file is run directly as a script, not
+# recommended since the server should be started from main.py
 if __name__ == "__main__":
     server_manager = ServerManager()
 

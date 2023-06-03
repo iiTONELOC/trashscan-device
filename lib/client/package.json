@@ -11,13 +11,16 @@
   "author": "iiTONELOC",
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "socket.io-client": "^4.6.2"
   },
   "devDependencies": {
     "@parcel/compressor-brotli": "^2.9.1",
     "@parcel/compressor-gzip": "^2.9.1",
+    "@types/node": "^20.2.5",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
+    "buffer": "^6.0.3",
     "parcel": "^2.9.1",
     "process": "^0.11.10"
   },

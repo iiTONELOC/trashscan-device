@@ -10,8 +10,9 @@ import lib.write_to_scanned_json as recent_list
 
 from lib.graphql import MUTATIONS
 
-from lib.server import ServerManager, open_browser
+from lib.server import ServerManager
 from lib.signal_handler import SignalHandler
+from lib.server.server_utils import open_browser
 from lib.session_manager.token_utils import get_auth_token
 from lib.keyboard_manager import listen_system_keyboard_input
 from lib.session_manager import login, check_session, session_manager
