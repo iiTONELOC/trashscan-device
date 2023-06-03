@@ -10,7 +10,7 @@ import lib.write_to_scanned_json as recent_list
 
 from lib.graphql import MUTATIONS
 
-from lib.server import ServerManager
+from lib.server import server_manager
 from lib.signal_handler import SignalHandler
 from lib.server.server_utils import open_browser
 from lib.session_manager.token_utils import get_auth_token
@@ -19,10 +19,10 @@ from lib.session_manager import login, check_session, session_manager
 
 
 UPC_SERVER_URL = os.environ['UPC_SERVER']
-
 LOGGER = logging.getLogger('DEFAULT')
 ERROR_LOGGER = logging.getLogger('ERROR')
 BARCODE_LOGGER = logging.getLogger('BARCODE')
+PRODUCTION = os.environ['PRODUCTION'] == 'true'
 
 signal_handler = SignalHandler()
 
@@ -105,18 +105,17 @@ def escape_ansii(string):
 
 
 def listen_for_input():
-    keyboard_input = escape_ansii(str(input()))
+    if PRODUCTION:
+        def _action(data):
+            send_barcode(data)
 
-    if keyboard_input:
-        check_session()
-        send_barcode(keyboard_input.strip())
+        listen_system_keyboard_input(_action)
+    else:
+        keyboard_input = escape_ansii(str(input()))
 
-    # def _action(data):
-    #     # print("Keyboard _action")
-    #     # print('Incoming data: ', data)
-    #     send_barcode(data)
-
-    # listen_system_keyboard_input(_action)
+        if keyboard_input:
+            check_session()
+            send_barcode(keyboard_input.strip())
 
 
 def display_welcome_message():
@@ -127,7 +126,6 @@ def display_welcome_message():
 
 
 def main():
-    server_manager = ServerManager()
     LOGGER.info('Starting the program...')
     atexit.register(session_manager.exit_handler)
     atexit.register(server_manager.exit_handler)
