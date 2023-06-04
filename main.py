@@ -22,6 +22,8 @@ ERROR_LOGGER = logging.getLogger('ERROR')
 BARCODE_LOGGER = logging.getLogger('BARCODE')
 PRODUCTION = os.environ['PRODUCTION'] == 'true'
 
+SERVER = None
+
 signal_handler = SignalHandler()
 
 
@@ -133,17 +135,38 @@ def display_welcome_message():
     print('Press Ctrl+C to exit')
 
 
+def run_server():
+    # check if we are in production
+    global SERVER
+    if PRODUCTION:
+        # run the npm run start command from the GUI/server folder
+        # ./lib/GUI/server npm run start
+        SERVER = subprocess.Popen(['npm', 'run', 'start'],
+                                  cwd='./lib/GUI/server', start_new_session=True)
+
+    if not PRODUCTION:
+        # run the npm run start command from the GUI/server folder
+        # ./lib/GUI/server npm run start
+        SERVER = subprocess.Popen(['npm', 'run', 'dev'],
+                                  cwd='./lib/GUI/server', start_new_session=True)
+
+    subprocess.Popen(
+        ['sudo', '-u', 'odroid', 'firefox', '--kiosk', 'http://localhost:9000'], start_new_session=True)
+
+
 def main():
     LOGGER.info('Starting the program...')
     atexit.register(session_manager.exit_handler)
 
     def start_background_services():
         session_manager.start()
-        subprocess.Popen(
-            ['sudo', '-u', 'odroid', 'firefox', '--kiosk', 'http://localhost:9000'], start_new_session=True)
+        run_server()
 
     def stop_background_services():
         session_manager.stop()
+
+        if SERVER:
+            SERVER.kill()
 
     try:
         login()

@@ -1,29 +1,49 @@
-import os from 'os';
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
+import dotenv from 'dotenv';
 import express from 'express';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 
-const staticPath = path.join(__dirname, '../../client/dist');
+dotenv.config({
+    path: path.join(__dirname, '../../../.env')
+});
 
-const app = express();
-const server = http.createServer(app);
-const io = new SocketIOServer(server, { cors: { origin: '*' } });
+interface ScannedData {
+    recentlyScanned: {
+        addedAt: string;
+        productAlias: string | null;
+        productData: {
+            barcode: string[];
+            name: string;
+            _id: string;
+        }
+    }[]
+}
+
+
+const PORT = 9000;
+const app: express.Application = express();
+const server: http.Server = http.createServer(app);
+const staticPath = path.join(__dirname, '../../client/dist');
+const io: SocketIOServer = new SocketIOServer(server, { cors: { origin: '*' } });
 
 app.use(express.json());
 app.use(express.static(staticPath));
 
-const documentFolder = path.join(os.homedir(), 'Documents');
+const rootUser: string = process.env.ROOT_USER ?? 'root';
+const documentFolder = path.join('/home', rootUser, 'Documents');
 const scannedFolder = path.join(documentFolder, 'scanned');
+
 const scannedJson = path.join(scannedFolder, 'scanned_data.json');
 
-const readScannedJson = () => {
+const readScannedJson = (): ScannedData => {
     if (!fs.existsSync(scannedFolder)) {
         fs.mkdirSync(scannedFolder);
     }
 
     if (!fs.existsSync(scannedJson)) {
+
         fs.writeFileSync(scannedJson, JSON.stringify({ recentlyScanned: [] }));
     }
 
@@ -46,12 +66,12 @@ app.post('/api/newly-scanned', ({ body }, res) => {
 
 
 // Socket.IO event handling
-io.on('connection', (socket: Socket) => {
+io.on('connection', (socket: Socket): void => {
     // send the client the starting data
     socket.emit('data', STARTING_DATA.recentlyScanned);
 });
 
-const PORT = 9000;
+
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -21,12 +21,21 @@
     --margin: 1rem;
     --padding: 1rem;
 
-    /* Scroll Bars */
-    scrollbar-width: thin;
-    scrollbar-color: var(--secondary-accent) rgb(4, 4, 22);
-
-
     color: var(--light-gray-text)
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--secondary-color);
+}
+
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--primary-accent);
+    border-radius: 12px;
 }
 
 html {

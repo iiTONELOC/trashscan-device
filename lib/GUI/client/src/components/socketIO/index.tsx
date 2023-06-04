@@ -1,9 +1,10 @@
-import { SocketProvider } from './SocketProvider';
+import { SocketProvider, useSocketContext } from './SocketProvider';
 import { ConnectionState } from './ConnectionState';
 
 export default {
     ConnectionState,
-    SocketProvider
+    SocketProvider,
+    useSocketContext
 };
 
-export { ConnectionState, SocketProvider };
+export { ConnectionState, SocketProvider, useSocketContext };

@@ -28,7 +28,6 @@ function SocketProvider({ ...props }: PropsWithChildren<{}>): ReactElement {
             setIsConnected(true);
             setMySocket(socket);
             socket.connect();
-            mySocket?.emit('message_from_client', { message: 'Hello from client' })
         }
 
         const onDisconnect = (): void => {
@@ -36,27 +35,13 @@ function SocketProvider({ ...props }: PropsWithChildren<{}>): ReactElement {
             socket.disconnect();
         }
 
-        const onUpdate = (data: any) => {
-            console.log('Socket Update')
-            console.log(data);
-        };
-
-        const onData = (data: any) => {
-            console.log('Socket Data')
-            console.log(data);
-        };
-
         mySocket?.on('connect', onConnect);
         mySocket?.on('disconnect', onDisconnect);
-        mySocket?.on('update', onUpdate);
-        mySocket?.on('data', onData)
 
 
         return () => {
             mySocket?.off('connect', onConnect);
             mySocket?.off('disconnect', onDisconnect);
-            mySocket?.off('update', onUpdate);
-            mySocket?.off('data', onData)
             setMySocket(null)
         };
     }, []);
