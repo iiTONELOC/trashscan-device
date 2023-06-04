@@ -1,7 +1,7 @@
 import { useSocketContext } from '../socketIO';
 import React, { useState, useEffect } from 'react';
 import { ProductCard, IProductCardProps } from '../ProductCard';
-import formatTime from '../../utils/formatTime';
+
 
 
 export interface IScannedItem {
@@ -23,14 +23,19 @@ export function ScannedItems(): React.ReactElement {
 
 
     const handleUpdate = (data: any) => {
-        if (Array.isArray(data)) {
-            for (const item of data) {
-                setScannedItems(prevState => [...prevState, item]);
-            }
-        } else {
-            setScannedItems(prevState => [...prevState, data]);
+        data = {
+            ...data,
+            createdAt: new Date(Date.now()).toUTCString()
         }
+        setScannedItems(prevState => [...prevState, data]);
     };
+
+    const handleData = (data: any) => {
+        for (const item of data) {
+            setScannedItems(prevState => [...prevState, item]);
+        }
+    }
+
 
 
     useEffect(() => {
@@ -45,11 +50,13 @@ export function ScannedItems(): React.ReactElement {
     useEffect(() => {
         if (isConnected) {
 
-            mySocket?.on('data', handleUpdate);
+            mySocket?.on('update', handleUpdate);
+            mySocket?.on('data', handleData);
         }
 
         return () => {
-            mySocket?.off('data', handleUpdate);
+            mySocket?.off('update', handleUpdate);
+            mySocket?.off('data', handleData);
         }
     }, [isConnected]);
 
@@ -62,12 +69,12 @@ export function ScannedItems(): React.ReactElement {
                 .map((item, index) => {
                     const props: IProductCardProps = {
                         barcode: item.productData.barcode[0],
-                        scannedAt: formatTime(item.addedAt),
+                        scannedAt: item.addedAt,
                         name: item.productData.name
                     }
                     return (
                         <ProductCard
-                            key={index}
+                            key={`${item.addedAt}-${Date.now()}=${index}`}
                             {...props}
                         />
                     )

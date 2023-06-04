@@ -56,7 +56,7 @@ app.post('/api/newly-scanned', ({ body }, res) => {
     try {
         const { barcodeData } = body;
         STARTING_DATA.recentlyScanned.push(barcodeData);
-        io.emit('data', barcodeData);
+        io.emit('update', barcodeData);
         res.status(200).send('OK');
     } catch (error) {
         res.status(500)
