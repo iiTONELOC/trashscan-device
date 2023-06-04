@@ -16,7 +16,7 @@ from lib.keyboard_manager import listen_system_keyboard_input
 from lib.session_manager import login, check_session, session_manager
 
 SERVER = None
-PORT = os.eviron['PORT'] or 9000
+PORT = os.environ['PORT'] or 9000
 ROOT_USER = os.environ['ROOT_USER']
 LOGGER = logging.getLogger('DEFAULT')
 ERROR_LOGGER = logging.getLogger('ERROR')
@@ -137,11 +137,12 @@ def display_welcome_message():
 
 
 def start_gui():
+    cwd = os.path.join(os.getcwd(), 'Trash_Scan','lib', 'GUI')
     # check if we are in production
     global SERVER
     if PRODUCTION:
         SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'start'],
-                                  cwd='./lib/GUI', start_new_session=True)
+                                  cwd=cwd, start_new_session=True)
         
           #  Launch Firefox in Kiosk mode to our GUI which is hosted at localhost:PORT
         subprocess.Popen(
@@ -149,7 +150,7 @@ def start_gui():
 
     if not PRODUCTION:
         SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'dev'],
-                                  cwd='./lib/GUI', start_new_session=True)
+                                  cwd=cwd, start_new_session=True)
 
   
 
