@@ -1,8 +1,15 @@
 import os
+import subprocess
 
 PREFIX = 'python3' if os.name == 'posix' else 'python'
-
-
+cwd = os.getcwd()
+gui_folder = os.path.join(cwd, 'lib','GUI')
+  
+def install_and_build_gui():
+    install_process = subprocess.Popen('npm i', shell=True, cwd=gui_folder)
+    install_process.wait()
+    os.system(f'cd {gui_folder} && npm run build')
+    
 def is_pip_installed():
     try:
         os.system(f'{PREFIX} -m pip')
@@ -34,7 +41,7 @@ def run_setup():
     print('Setting up the trash scanner...')
     update_pip()
     install_requirements()
-    # prep_usb_scanner()
+    install_and_build_gui()
     print('Setup complete!')
 
 

@@ -1,13 +1,13 @@
 {
-  "name": "server",
+  "name": "trashscanner-gui-server",
   "version": "1.0.0",
   "description": "",
   "main": "lib/main.js",
   "scripts": {
-    "build": "npm run lint && rimraf ./lib && tsc",
+    "build": "npm run lint && rimraf lib && tsc",
     "lint": "eslint src/**/*.ts",
-    "start": "npm run ./lib/main.js",
-    "dev": "concurrently 'cd .. && cd client && npm run start' 'nodemon src/main.ts'"
+    "start": "node lib/main.js",
+    "dev": "nodemon src/main.ts"
   },
   "keywords": [],
   "author": "",

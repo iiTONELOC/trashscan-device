@@ -15,14 +15,15 @@ from lib.session_manager.token_utils import get_auth_token
 from lib.keyboard_manager import listen_system_keyboard_input
 from lib.session_manager import login, check_session, session_manager
 
-
-UPC_SERVER_URL = os.environ['UPC_SERVER']
+SERVER = None
+PORT = os.eviron['PORT'] or 9000
+ROOT_USER = os.environ['ROOT_USER']
 LOGGER = logging.getLogger('DEFAULT')
 ERROR_LOGGER = logging.getLogger('ERROR')
+UPC_SERVER_URL = os.environ['UPC_SERVER']
 BARCODE_LOGGER = logging.getLogger('BARCODE')
-PRODUCTION = os.environ['PRODUCTION'] == 'true'
+PRODUCTION = os.environ['PRODUCTION'] == 'True'
 
-SERVER = None
 
 signal_handler = SignalHandler()
 
@@ -69,7 +70,7 @@ def send_barcode(barcode):
                 if product != None:
                     recent_list.add_recent_product(product)
                     requests.post(
-                        url='http://localhost:9000/api/newly-scanned',
+                        url=f'http://localhost:{PORT}/api/newly-scanned',
                         headers={
                             'Content-Type': 'application/json; charset=utf-8',
                         },
@@ -135,23 +136,22 @@ def display_welcome_message():
     print('Press Ctrl+C to exit')
 
 
-def run_server():
+def start_gui():
     # check if we are in production
     global SERVER
     if PRODUCTION:
-        # run the npm run start command from the GUI/server folder
-        # ./lib/GUI/server npm run start
-        SERVER = subprocess.Popen(['npm', 'run', 'start'],
-                                  cwd='./lib/GUI/server', start_new_session=True)
+        SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'start'],
+                                  cwd='./lib/GUI', start_new_session=True)
+        
+          #  Launch Firefox in Kiosk mode to our GUI which is hosted at localhost:PORT
+        subprocess.Popen(
+            ['sudo', '-u', f'{ROOT_USER}', 'firefox', '--kiosk', f'http://localhost:{PORT}'], start_new_session=True)
 
     if not PRODUCTION:
-        # run the npm run start command from the GUI/server folder
-        # ./lib/GUI/server npm run start
-        SERVER = subprocess.Popen(['npm', 'run', 'dev'],
-                                  cwd='./lib/GUI/server', start_new_session=True)
+        SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'dev'],
+                                  cwd='./lib/GUI', start_new_session=True)
 
-    subprocess.Popen(
-        ['sudo', '-u', 'odroid', 'firefox', '--kiosk', 'http://localhost:9000'], start_new_session=True)
+  
 
 
 def main():
@@ -160,7 +160,7 @@ def main():
 
     def start_background_services():
         session_manager.start()
-        run_server()
+        start_gui()
 
     def stop_background_services():
         session_manager.stop()

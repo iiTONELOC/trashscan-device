@@ -31,11 +31,11 @@ const io: SocketIOServer = new SocketIOServer(server, { cors: { origin: '*' } })
 app.use(express.json());
 app.use(express.static(staticPath));
 
-const rootUser: string = process.env.ROOT_USER ?? 'root';
-const documentFolder = path.join('/home', rootUser, 'Documents');
-const scannedFolder = path.join(documentFolder, 'scanned');
+const rootUser: string = process.env.ROOT_USER ?? 'odroid';
+const documentFolder = path.resolve('/home', rootUser, 'Documents');
+const scannedFolder = path.resolve(documentFolder, 'scanned');
 
-const scannedJson = path.join(scannedFolder, 'scanned_data.json');
+const scannedJson = path.resolve(scannedFolder, 'scanned_data.json');
 
 const readScannedJson = (): ScannedData => {
     if (!fs.existsSync(scannedFolder)) {

@@ -1,5 +1,5 @@
 {
-  "name": "trashscanner-gui",
+  "name": "trashscanner-gui-client",
   "version": "1.0.0",
   "description": "Trashscanner React GUI",
   "source": "src/index.html",
