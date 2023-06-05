@@ -18,8 +18,7 @@ export function PowerAndRestart(): React.ReactElement {
                 <PowerIcon isHovered={false} />
             </button>
 
-            {open && (<DropDownMenu onMouseLeave={() => setOpen(false)}
-            />)}
+            {open && (<DropDownMenu />)}
         </>
 
     );

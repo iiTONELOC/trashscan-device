@@ -1,28 +1,21 @@
-import React from 'react';
+import { Confirm } from '../Confirm';
 import { MenuItem } from './MenuItem';
 import { PowerIcon, RestartIcon } from '../Icons';
+import React, { useState, useEffect } from 'react';
+
 
 const handleShutdown = () => {
-    console.log('Shutdown');
-
-    const confirm = window.confirm('Are you sure you want to shutdown?');
-    if (confirm) {
-        fetch('/api/shutdown', {
-            method: 'POST',
-        })
-    }
+    fetch('/api/shutdown', {
+        method: 'POST',
+    });
 };
 
-const handleRestart = () => {
-    console.log('Restart');
 
-    const confirm = window.confirm('Are you sure you want to restart?');
-    if (confirm) {
-        fetch('/api/restart', {
-            method: 'POST',
-        })
-    }
-}
+const handleRestart = () => {
+    fetch('/api/restart', {
+        method: 'POST',
+    });
+};
 
 
 const menuData = [
@@ -30,30 +23,61 @@ const menuData = [
         text: 'Shutdown',
         Icon: PowerIcon,
         isShutdown: true,
-        onClick: handleShutdown,
+        type: 'shutdown',
     },
     {
         text: 'Restart',
         Icon: RestartIcon,
-        onClick: handleRestart,
+        type: 'restart',
     }
-]
+];
 
-export function DropDownMenu({ onMouseLeave }: { onMouseLeave: () => void }) {
+export function DropDownMenu() {
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [confirmType, setConfirmType] = useState('');
+
+    useEffect(() => {
+        if (confirmType) {
+            setShowConfirm(true);
+        }
+    }, [confirmType]);
+
+    const resetConfirm = () => {
+        setShowConfirm(false);
+        setConfirmType('');
+    };
 
     return (
-        <div className="dropdown" onMouseLeave={onMouseLeave}>
-            <menu>
-                {menuData.map(({ text, Icon, isShutdown, onClick }) => (
-                    <MenuItem
-                        key={text}
-                        text={text}
-                        Icon={Icon}
-                        isShutdown={isShutdown}
-                        onClick={onClick}
+        <>
+            <div className="dropdown">
+                <menu>
+                    {menuData.map(({ text, Icon, isShutdown, type }) => (
+                        <MenuItem
+                            key={text}
+                            text={text}
+                            Icon={Icon}
+                            isShutdown={isShutdown}
+                            onClick={() => setConfirmType(type)}
+                        />
+                    ))}
+                </menu>
+            </div>
+            {showConfirm && (
+                confirmType === 'shutdown' ? (
+                    <Confirm
+                        message='Are you sure you want to shutdown?'
+                        onConfirm={handleShutdown}
+                        onCancel={() => resetConfirm()}
                     />
-                ))}
-            </menu>
-        </div>
+                ) : (
+                    <Confirm
+                        message='Are you sure you want to restart?'
+                        onConfirm={handleRestart}
+                        onCancel={() => resetConfirm()}
+                    />
+                )
+            )}
+        </>
+
     )
 }
