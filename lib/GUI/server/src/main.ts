@@ -5,9 +5,26 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 
+const rootFromPath = (path: string): string => {
+    const root = path.split('/')[2];
+    console.log({ root });
+    return root;
+}
+
+
+const envPath = path.join(__dirname, '../../../.env');
+
 dotenv.config({
-    path: path.join(__dirname, '../../../.env')
+    path: envPath
 });
+
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 9000;
+const rootUser: string = process.env.ROOT_USER ?? rootFromPath(envPath);
+const documentFolder = path.resolve('/home', rootUser, 'Documents');
+const scannedFolder = path.resolve(documentFolder, 'scanned');
+const scannedJson = path.resolve(scannedFolder, 'scanned_data.json');
+
+
 
 interface ScannedData {
     recentlyScanned: {
@@ -22,7 +39,7 @@ interface ScannedData {
 }
 
 
-const PORT = 9000;
+
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
 const staticPath = path.join(__dirname, '../../client/dist');
@@ -31,11 +48,6 @@ const io: SocketIOServer = new SocketIOServer(server, { cors: { origin: '*' } })
 app.use(express.json());
 app.use(express.static(staticPath));
 
-const rootUser: string = process.env.ROOT_USER ?? 'odroid';
-const documentFolder = path.resolve('/home', rootUser, 'Documents');
-const scannedFolder = path.resolve(documentFolder, 'scanned');
-
-const scannedJson = path.resolve(scannedFolder, 'scanned_data.json');
 
 const readScannedJson = (): ScannedData => {
     if (!fs.existsSync(scannedFolder)) {

@@ -118,7 +118,7 @@ main {
     background-image: linear-gradient(90deg, transparent, var(--primary-color), transparent);
     background-size: 800% 100%;
     z-index: -1;
-    animation: laser-scan 8s linear infinite;
+    /* animation: laser-scan 8s linear infinite; */
 }
 
 @keyframes laser-scan {
