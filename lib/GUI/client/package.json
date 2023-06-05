@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run clean && parcel",
     "build": "npm run clean && parcel build",
-    "clean": "rm -r ./dist"
+    "clean": "rimraf ./dist"
   },
   "author": "iiTONELOC",
   "dependencies": {
