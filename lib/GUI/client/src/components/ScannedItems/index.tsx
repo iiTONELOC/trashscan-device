@@ -1,3 +1,4 @@
+import './ScannedItems.css';
 import { useSocketContext } from '../socketIO';
 import React, { useState, useEffect } from 'react';
 import { ProductCard, IProductCardProps } from '../ProductCard';

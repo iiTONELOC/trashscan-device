@@ -1,6 +1,7 @@
 import './Header.css';
 import { ConnectionState } from '../socketIO';
 import React, { useState, useEffect } from 'react';
+import { PowerAndRestart } from '../PowerRestart';
 
 export function Header(): React.ReactElement {
     const [currentTime, setCurrentTime] = useState<string>(
@@ -53,7 +54,12 @@ export function Header(): React.ReactElement {
         <div className="header">
             <p>{currentDate}</p>
             <p className='current-time'>{currentTime}</p>
-            <ConnectionState />
+
+            <section className='header-section'>
+                <ConnectionState />
+                <PowerAndRestart />
+            </section>
+
         </div>
     );
 }

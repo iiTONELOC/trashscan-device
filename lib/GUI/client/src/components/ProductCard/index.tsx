@@ -1,3 +1,4 @@
+import './ProductCard.css';
 import React, { useEffect } from 'react';
 import formatTime from '../../utils/formatTime';
 
@@ -33,7 +34,6 @@ export function ProductCard({ barcode, scannedAt, name }: IProductCardProps): Re
 
 
     return isMounted ? (
-
         <div className="card text-shadow">
             <header className={headerClass}>
                 <h2 className="card-title">
@@ -46,6 +46,5 @@ export function ProductCard({ barcode, scannedAt, name }: IProductCardProps): Re
                 <p className="card-created-at">Scanned: {formattedTime}</p>
             </div>
         </div>
-
     ) : <></>;
 }

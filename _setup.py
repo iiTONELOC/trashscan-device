@@ -3,13 +3,25 @@ import subprocess
 
 PREFIX = 'python3' if os.name == 'posix' else 'python'
 cwd = os.getcwd()
-gui_folder = os.path.join(cwd, 'lib','GUI')
-  
-def install_and_build_gui():
+gui_folder = os.path.join(cwd, 'lib', 'GUI')
+
+
+def build_gui():
+    os.system(f'cd {gui_folder} && npm run build')
+
+
+def install_gui():
     install_process = subprocess.Popen('npm i', shell=True, cwd=gui_folder)
     install_process.wait()
-    os.system(f'cd {gui_folder} && npm run build')
-    
+    return True
+
+
+def install_and_build_gui():
+    installed = install_gui()
+    if installed:
+        build_gui()
+
+
 def is_pip_installed():
     try:
         os.system(f'{PREFIX} -m pip')

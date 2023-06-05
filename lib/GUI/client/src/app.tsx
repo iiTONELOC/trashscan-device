@@ -1,5 +1,5 @@
 import React from 'react';
-import { SocketProvider, Header, ScannedItems } from './components';
+import { SocketProvider, Header, ScannedItems, RefreshPage } from './components';
 
 
 
@@ -8,6 +8,7 @@ export function App() {
         <SocketProvider>
             <Header />
             <ScannedItems />
+            <RefreshPage />
         </SocketProvider>
     )
 }

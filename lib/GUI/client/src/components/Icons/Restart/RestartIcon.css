@@ -1,0 +1,8 @@
+.restart-icon {
+    fill: var(--gray-text);
+}
+
+.restart-icon-hover {
+    fill: var(--secondary-accent);
+    scale: 1.05;
+}
