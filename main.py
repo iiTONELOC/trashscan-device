@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import json
+import time
 import atexit
 import logging
 import requests
@@ -137,18 +138,19 @@ def display_welcome_message():
 
 
 def start_gui():
-    cwd = os.path.join(os.getcwd(), 'Trash_Scan','lib', 'GUI')
+    cwd = os.path.join(os.getcwd(),'lib', 'GUI')
     # check if we are in production
     global SERVER
     if PRODUCTION:
         SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'start'],
                                   cwd=cwd, start_new_session=True)
         
+        # sleep for a few seconds before starting the  Firefox window, give the server a sec to come online
+        time.sleep(5)
           #  Launch Firefox in Kiosk mode to our GUI which is hosted at localhost:PORT
         subprocess.Popen(
             ['sudo', '-u', f'{ROOT_USER}', 'firefox', '--kiosk', f'http://localhost:{PORT}'], start_new_session=True)
-
-    if not PRODUCTION:
+    else:
         SERVER = subprocess.Popen(['sudo', '-u', f'{ROOT_USER}','npm', 'run', 'dev'],
                                   cwd=cwd, start_new_session=True)
 
