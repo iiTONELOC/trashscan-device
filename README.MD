@@ -2,7 +2,7 @@
 
 ## Screenshot
 
-![TrashScan _The Device™_](./assets/images/trashscanner_screenshot-min.jpg)
+![TrashScanner](./assets/images/trashscanner_screenshot-min.jpg)
 
 ## Table of Contents
 
