@@ -17,6 +17,17 @@ export interface IScannedItem {
 
 const toDate = (stringDate: string): Date => new Date(stringDate);
 
+const fetchScannedItems = async (): Promise<IScannedItem[]> => {
+    try {
+        const res = await fetch('/api/scanned-items');
+        const data = await res.json();
+        return data.recentlyScanned;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
 export function ScannedItems(): React.ReactElement {
     const { mySocket, isConnected } = useSocketContext();
     const [isMounted, setIsMounted] = useState<boolean | null>(false);
@@ -38,14 +49,15 @@ export function ScannedItems(): React.ReactElement {
     }
 
 
-
     useEffect(() => {
         setIsMounted(true);
+        fetchScannedItems().then(data => {
+            setScannedItems(data);
+        });
         return () => {
             setIsMounted(null);
         }
     }, []);
-
 
 
     useEffect(() => {
