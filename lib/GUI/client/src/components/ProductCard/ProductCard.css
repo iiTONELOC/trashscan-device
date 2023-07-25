@@ -9,11 +9,18 @@
     margin-top: 15px;
 }
 
-.card:first-child {
-    margin-top: 55px;
-    margin-bottom: 95px;
-    scale: 1.08;
+.card:first-of-type {
+    margin-top: 45px;
+    margin-bottom: 65px;
+    scale: 1.05;
     position: relative;
+    background-color: rgba(255, 255, 255, 0.068);
+    filter: drop-shadow(-1 1 1.125em #219b43);
+}
+
+.drop-red:first-of-type {
+    filter: drop-shadow(-1 1 1.125em #f62a2a) !important;
+    background-color: rgba(255, 255, 255, 0.068);
 }
 
 .card:last-child {
@@ -53,7 +60,7 @@
 }
 
 .not-found {
-    background-color: var(--error);
+    background-color: rgb(184, 0, 0);
     border-top: 5px solid rgb(255, 27, 27)-- !important;
 }
 

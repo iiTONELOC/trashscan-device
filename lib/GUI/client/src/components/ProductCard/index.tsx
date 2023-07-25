@@ -12,7 +12,8 @@ export interface IProductCardProps {
 export function ProductCard({ barcode, scannedAt, name }: IProductCardProps): React.ReactElement<IProductCardProps> {
     const [isMounted, setIsMounted] = React.useState<boolean | null>(null);
     const [formattedTime, setFormattedTime] = React.useState<string>('');
-    const headerClass = `card-header ${name.includes('not found') ? ' not-found' : ''}`
+    const cardClass = `card text-shadow ${name.includes('not found') ? 'drop-red' : ''}`
+    const headerClass = `card-header ${name.includes('not found') ? 'not-found' : ''}`
 
     useEffect(() => {
         setIsMounted(true);
@@ -34,7 +35,7 @@ export function ProductCard({ barcode, scannedAt, name }: IProductCardProps): Re
 
 
     return isMounted ? (
-        <div className="card text-shadow">
+        <div className={cardClass}>
             <header className={headerClass}>
                 <h2 className="card-title">
                     {name}
