@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { ProductCard, IProductCardProps } from '../ProductCard';
 
 
-
 export interface IScannedItem {
     addedAt: string;
     productAlias: string | null;
@@ -51,27 +50,20 @@ export function ScannedItems(): React.ReactElement {
 
     useEffect(() => {
         setIsMounted(true);
+
         fetchScannedItems().then(data => {
             setScannedItems(data);
         });
+
+        mySocket?.on('update', handleUpdate);
+        mySocket?.on('data', handleData);
+
         return () => {
             setIsMounted(null);
-        }
-    }, []);
-
-
-    useEffect(() => {
-        if (isConnected) {
-
-            mySocket?.on('update', handleUpdate);
-            mySocket?.on('data', handleData);
-        }
-
-        return () => {
             mySocket?.off('update', handleUpdate);
             mySocket?.off('data', handleData);
         }
-    }, [isConnected]);
+    }, []);
 
 
 
@@ -92,7 +84,6 @@ export function ScannedItems(): React.ReactElement {
                         />
                     )
                 })}
-
         </section>
     ) : <></>
 }

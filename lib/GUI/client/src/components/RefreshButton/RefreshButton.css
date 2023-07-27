@@ -1,12 +1,16 @@
 .refresh-button {
     position: fixed;
-    bottom: 10px;
-    left: 3%;
+    top: 54px;
+    left: 50%;
     transform: translateX(-50%);
-    z-index: 999;
+    z-index: 999999999;
     background-color: transparent;
     border: none;
     cursor: pointer;
+}
+
+.refresh-button:hover {
+    filter: drop-shadow(0 0 4px var(--primary-accent));
 }
 
 .refresh-button svg {
