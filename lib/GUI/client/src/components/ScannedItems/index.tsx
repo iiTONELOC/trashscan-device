@@ -1,5 +1,4 @@
 import './ScannedItems.css';
-import { useSocketContext } from '../socketIO';
 import React, { useState, useEffect } from 'react';
 import { ProductCard, IProductCardProps } from '../ProductCard';
 
@@ -27,45 +26,68 @@ const fetchScannedItems = async (): Promise<IScannedItem[]> => {
     }
 }
 
-export function ScannedItems(): React.ReactElement {
-    const { mySocket, isConnected } = useSocketContext();
-    const [isMounted, setIsMounted] = useState<boolean | null>(false);
+const useScannedItemHooks = () => {
     const [scannedItems, setScannedItems] = useState<IScannedItem[]>([]);
+    const [isMounted, setIsMounted] = useState<boolean | null>(false);
+    const [isIntervalSet, setIsIntervalSet] = useState<boolean>(false);
+    const [wasUpdated, setWasUpdated] = useState<boolean>(false);
 
-
-    const handleUpdate = (data: any) => {
-        data = {
-            ...data,
-            createdAt: new Date(Date.now()).toUTCString()
-        }
-        setScannedItems(prevState => [...prevState, data]);
-    };
 
     const handleData = (data: any) => {
-        for (const item of data) {
-            setScannedItems(prevState => [...prevState, item]);
-        }
-    }
-
+        setScannedItems(data);
+    };
 
     useEffect(() => {
         setIsMounted(true);
-
-        fetchScannedItems().then(data => {
-            setScannedItems(data);
-        });
-
-        mySocket?.on('update', handleUpdate);
-        mySocket?.on('data', handleData);
+        fetchScannedItems().then(data => handleData(data));
 
         return () => {
             setIsMounted(null);
-            mySocket?.off('update', handleUpdate);
-            mySocket?.off('data', handleData);
         }
     }, []);
 
+    async function handleUpdate() {
+        const _scannedItems = await fetchScannedItems()
+        const numberOfScannedItems = _scannedItems.length;
+        const currentNumberOfScannedItems = scannedItems.length;
 
+
+        if (isMounted && currentNumberOfScannedItems < numberOfScannedItems && !wasUpdated) {
+            setScannedItems(_scannedItems);
+            setWasUpdated(true);
+        } else {
+            setWasUpdated(false);
+        }
+    };
+
+    useEffect(() => {
+        let interval: any;
+
+        if (isMounted && !isIntervalSet && scannedItems.length > 0) {
+            setIsIntervalSet(true);
+            interval && clearInterval(interval);
+            // polls every second for new product scans
+            interval = setInterval(() => {
+                handleUpdate().then().catch(console.error);
+            }, 1000);
+        } else {
+            setIsIntervalSet(false);
+        }
+        return () => {
+            clearInterval(interval);
+            setIsIntervalSet(false);
+        }
+    }, [isMounted, scannedItems]);
+
+
+    return {
+        scannedItems,
+        isMounted
+    }
+}
+
+export function ScannedItems(): React.ReactElement {
+    const { scannedItems, isMounted } = useScannedItemHooks();
 
     return isMounted ? (
         <section className="list-container">
