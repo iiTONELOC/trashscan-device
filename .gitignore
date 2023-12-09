@@ -16,3 +16,5 @@ node_modules/
 .parcel-cache/
 dist/
 lib/GUI/server/lib
+
+.DS_Store
