@@ -1,0 +1,89 @@
+.card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
+    box-shadow: 0 2px 5px rgba(192, 191, 191, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 75vw;
+    margin-top: 15px;
+}
+
+.card:first-child {
+    margin-top: 55px;
+    margin-bottom: 95px;
+    scale: 1.08;
+    position: relative;
+}
+
+.card:last-child {
+    margin-bottom: 80px
+}
+
+.card-header {
+    width: 100%;
+    background-color: #187031;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    padding: 5px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
+.card-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.card-body {
+    width: 100%;
+    padding: 20px;
+}
+
+.card-description {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.card-created-at {
+    font-size: 1.25rem
+}
+
+.not-found {
+    background-color: var(--error);
+    border-top: 5px solid rgb(255, 27, 27)-- !important;
+}
+
+@media screen and (max-width: 600px) {
+    .card {
+        width: 85vw;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .card {
+        width: 65vw;
+    }
+}
+
+
+@media screen and (min-width: 900px) {
+    .card {
+        width: 50vw;
+    }
+}
+
+@media screen and (min-width: 1150px) {
+    .card {
+        width: 40vw;
+    }
+}
+
+@media screen and (min-width: 1500px) {
+    .card {
+        width: 30vw;
+    }
+}

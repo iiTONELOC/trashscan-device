@@ -27,5 +27,9 @@
  */
 
 import './index.css';
+import { render } from 'preact';
+import TrashScanner from './app/index';
 
 console.log('👋 This message is being logged by "renderer.ts", included via Vite');
+
+render(TrashScanner(), document.body); // NOSONAR

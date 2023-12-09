@@ -1,8 +1,8 @@
 {
-  "name": "electronapp",
-  "productName": "electronapp",
+  "name": "trashscanner-device",
+  "productName": "trashscanner-device",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Scan barcodes and upload them to your TrashScanner Web App",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -25,6 +25,7 @@
     "@electron-forge/maker-zip": "^7.2.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@electron-forge/plugin-vite": "^7.2.0",
+    "@preact/preset-vite": "^2.7.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "electron": "28.0.0",
@@ -34,6 +35,7 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "preact": "^10.19.3"
   }
 }

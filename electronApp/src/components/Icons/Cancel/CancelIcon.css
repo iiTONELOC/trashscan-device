@@ -1,0 +1,7 @@
+.cancel-fill {
+    fill: var(--gray-text)
+}
+
+.cancel-fill:hover {
+    fill: var(--error)
+}

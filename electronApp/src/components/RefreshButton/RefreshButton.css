@@ -1,0 +1,23 @@
+.refresh-button {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.refresh-button svg {
+    width: 50px;
+    height: 50px;
+    fill: var(--gray-text);
+}
+
+.refresh-button svg:hover,
+.refresh-button svg:focus,
+.refresh-button svg:active {
+    fill: var(--primary-accent);
+    scale: 1.1;
+}
