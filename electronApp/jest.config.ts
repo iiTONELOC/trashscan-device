@@ -18,7 +18,8 @@ const jestConfig: JestConfigWithTsJest = {
     '<rootDir>/node_modules/',
     '<rootDir>/.vite',
     '<rootDir>/dist/',
-    '<rootDir>/coverage/'
+    '<rootDir>/coverage/',
+    '<rootDir>/_db'
   ]
 };
 

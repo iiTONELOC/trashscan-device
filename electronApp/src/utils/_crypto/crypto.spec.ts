@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { describe, expect, it } from '@jest/globals';
 import { getSalt, generateEncryptionKey, encrypt, decrypt } from '.';
 
 describe('_crypto utilities', () => {

@@ -1,5 +1,8 @@
 import path from 'path';
+import './scripts/initDb';
 import './scripts/envloader';
+
+
 import { app, BrowserWindow } from 'electron';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.

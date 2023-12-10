@@ -1,7 +1,7 @@
 import './DeviceSettings.css'
 import { Setting } from './Setting';
-import { getUserProfile } from '../../utils';
-import { generateUUID } from '../../../../src/utils/uuid';
+import { getUserProfile, generateUUID } from '../../utils';
+
 
 export function DeviceSettings() {
     const userProfile = getUserProfile() ?? {

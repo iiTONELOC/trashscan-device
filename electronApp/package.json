@@ -5,7 +5,7 @@
   "description": "Scan barcodes and upload them to your TrashScanner Web App",
   "main": ".vite/build/main.js",
   "scripts": {
-    "test": "jest",
+    "test": "export NODE_ENV=test && ts-node src/scripts/initdb.ts && jest",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",

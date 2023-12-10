@@ -21,6 +21,9 @@
       ],
       "react/jsx-runtime": [
         "./node_modules/preact/compat"
+      ],
+      "jest": [
+        "./node_modules/jest"
       ]
     }
   },
@@ -29,6 +32,8 @@
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "_db",
+    "out",
   ]
 }

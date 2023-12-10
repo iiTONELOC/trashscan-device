@@ -1,5 +1,4 @@
 import { generateUUID } from './index';
-import { describe, expect, it } from '@jest/globals';
 
 describe('UUID utilities', () => {
     describe('generateUUID', () => {
