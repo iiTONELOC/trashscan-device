@@ -4,9 +4,6 @@ import { useState, useEffect } from 'preact/hooks';
 import { ProductCard, IProductCardProps } from '../ProductCard';
 
 
-
-
-
 export interface IScannedItem {
     addedAt: string;
     productAlias: string | null;

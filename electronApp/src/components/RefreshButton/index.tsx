@@ -1,9 +1,9 @@
-import React from 'react';
 import './RefreshButton.css';
+import { JSX } from 'preact/compat';
 import { RefreshIcon } from '../Icons';
 
 
-export function RefreshPage(): React.ReactElement {
+export function RefreshPage(): JSX.Element {
 
     const refreshPage = () => {
         window.location.reload();

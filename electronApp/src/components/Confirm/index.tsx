@@ -1,8 +1,8 @@
-import React from 'react'
+
 import './ConfirmModal.css'
 
 export function Confirm({ message, onConfirm, onCancel }:
-    { message: string, onConfirm: () => void, onCancel: () => void }) {
+    Readonly<{ message: string, onConfirm: () => void, onCancel: () => void }>) {
     return (
         <div className='confirm'>
             <p className='confirm-message text-shadow'>{message}</p>

@@ -1,9 +1,7 @@
 import './Header.css';
 import { JSX } from 'preact/compat';
-import { PowerAndRestart } from '../PowerRestart';
 import { useState, useEffect } from 'preact/hooks';
-
-
+import { Settings } from '../Settings';
 
 export function Header(): JSX.Element {
     const [currentTime, setCurrentTime] = useState<string>(
@@ -58,7 +56,7 @@ export function Header(): JSX.Element {
             <p className='current-time'>{currentTime}</p>
 
             <section className='header-section'>
-                <PowerAndRestart />
+                <Settings />
             </section>
 
         </div>
