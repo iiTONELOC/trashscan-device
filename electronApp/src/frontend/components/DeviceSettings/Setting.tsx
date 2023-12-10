@@ -1,4 +1,4 @@
-import { getUserProfile, UserProfile } from '../../../src/utils';
+import { getUserProfile, UserProfile } from '../../utils';
 
 export type ISettingProps = {
     label: string;

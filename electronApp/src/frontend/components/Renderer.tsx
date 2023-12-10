@@ -1,6 +1,6 @@
 import TrashScanner from '../app/index';
 import { getUserProfile } from '../utils';
-import ConfigureApp from '../configureApp';
+import ConfigureApp from './configureApp';
 
 
 

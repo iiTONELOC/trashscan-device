@@ -26,9 +26,9 @@
  * ```
  */
 
-import './index.css';
+
 import { render } from 'preact';
-import { HandleRender } from './components';
+import { HandleRender } from './frontend/components';
 
 console.log('👋 This message is being logged by "renderer.ts", included via Vite');
 

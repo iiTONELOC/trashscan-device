@@ -1,4 +1,4 @@
-import { DeviceSettings } from '../components';
+import { DeviceSettings } from '..';
 
 
 export default function ConfigureApp() {

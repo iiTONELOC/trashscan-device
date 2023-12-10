@@ -1,3 +1,4 @@
+import '../index.css';
 import { Header, ScannedItems, RefreshPage } from '../components';
 const App = () => {
 
