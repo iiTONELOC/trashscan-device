@@ -92,4 +92,7 @@ typings/
 out/
 
 # internal database
-_db
+_db/
+_settings/
+_scanned/
+~/.nvm/
