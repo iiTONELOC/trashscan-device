@@ -31,6 +31,12 @@ const centralBridge: IMainWindowIpcBridge = {
         getSettingDecrypted: (key: string, password: string) => ipcRenderer.invoke('appSettings-get-setting-decrypted', key, password),
         addSetting: (key: string, value: string) => ipcRenderer.invoke('appSettings-add-setting', key, value),
         updateSetting: (key: string, value: string) => ipcRenderer.invoke('appSettings-update-setting', key, value)
+    },
+    landFill: {
+        loginToUPCServer: () => ipcRenderer.invoke('landFill-login-to-upc-server'),
+        addItemToUsersDefaultList: (item: string) => ipcRenderer.invoke('landFill-add-item-to-users-default-list', item),
+        addItemToScannedList: (item: string) => ipcRenderer.invoke('landFill-add-item-to-scanned-list', item),
+        getScannedList: () => ipcRenderer.invoke('landFill-get-scanned-list')
     }
 };
 

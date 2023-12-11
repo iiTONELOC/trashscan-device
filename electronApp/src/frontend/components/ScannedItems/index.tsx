@@ -1,8 +1,8 @@
 import './ScannedItems.css';
 import { JSX } from 'preact/compat';
+import { BarcodeScanner } from '../BarcodeScanner';
 import { useState, useEffect } from 'preact/hooks';
 import { ProductCard, IProductCardProps } from '../ProductCard';
-
 
 export interface IScannedItem {
     addedAt: string;
@@ -21,24 +21,24 @@ export function ScannedItems(): JSX.Element {
     const [scannedItems, setScannedItems] = useState<IScannedItem[]>([]);
 
 
-    const handleUpdate = (data: any) => {
+    const handleUpdate = async (data: any) => {
         data = {
             ...data,
-            createdAt: new Date(Date.now()).toUTCString()
+            addedAt: new Date(Date.now()).toUTCString()
         }
         setScannedItems(prevState => [...prevState, data]);
+        await window.centralBridge.landFill.addItemToScannedList(data);
     };
-
-    const handleData = (data: any) => {
-        for (const item of data) {
-            setScannedItems(prevState => [...prevState, item]);
-        }
-    }
-
-
 
     useEffect(() => {
         setIsMounted(true);
+        (async () => {
+            const existingItems = await window.centralBridge.landFill.getScannedList();
+            if (existingItems) {
+                setScannedItems(existingItems);
+            }
+        })()
+
         return () => {
             setIsMounted(null);
         }
@@ -47,6 +47,7 @@ export function ScannedItems(): JSX.Element {
 
     return isMounted ? (
         <section className="list-container">
+            <BarcodeScanner onData={handleUpdate} />
             {scannedItems
                 .sort((a, b) => toDate(b.addedAt).getTime() - toDate(a.addedAt).getTime())
                 .map((item, index) => {

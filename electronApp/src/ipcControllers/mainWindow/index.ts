@@ -1,7 +1,8 @@
+import ipcLandFillHandlers from './landFill';
 import ipcAppSettingsHandlers from './appSettings';
 import ipcDbHandlers, { ICreateUserArgs } from './db';
 import ipcSessionHandlers, { ILoginArgs } from './session';
-import { ISettingsEncrypted, ISettings, IUserEncrypted } from '../../backend/db/models';
+import { ISettingsEncrypted, IUserEncrypted } from '../../backend/db/models';
 
 
 /**
@@ -96,16 +97,24 @@ export interface IMainWindowIpcBridge {
          * @returns a promise that resolves to true if the setting was updated successfully, otherwise false.
          */
         updateSetting: (key: string, value: string, password: string) => Promise<boolean>;
+    },
+    landFill: {
+        loginToUPCServer: () => Promise<boolean>;
+        addItemToUsersDefaultList: (item: string) => Promise<any>;
+        getScannedList: () => Promise<any>;
+        addItemToScannedList: (item: string) => Promise<any>;
     }
 }
 
 export * from './db/index';
 export * from './session/index';
+export { default as ipcLandFillHandlers } from './landFill/index';
 export { default as ipcAppSettingsHandlers } from './appSettings/index';
 export { default as ipcSessionHandlers } from './session/index';
 
 export default {
     ipcDbHandlers,
     ipcAppSettingsHandlers,
-    ipcSessionHandlers
+    ipcSessionHandlers,
+    ipcLandFillHandlers
 }

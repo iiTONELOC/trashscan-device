@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
         watch: {
             ignored: [
-                '**.env**'
+                '**/_settings/**'
             ]
         }
     }

@@ -1,13 +1,9 @@
-import path from 'path';
 import crypto from 'crypto';
-import { appendFileSync } from 'fs';
-import { generateUUID } from '../uuid';
+import { writeFileSync, readFileSync } from 'fs';
+import { generateUUID } from '../../../backend/utils/uuid';
+import { envFilePath } from '../env';
 
-const rootDir = () => process.cwd();
-const envFile = () => process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
-export const envFilePath = () => path.join(rootDir(), envFile());
-
-
+const _envPath = envFilePath();
 
 
 export type EncryptionData = {
@@ -24,10 +20,18 @@ function getOrCreateEnv(variable: string): string {
     let wantedVariable = process.env[variable];
 
     if (!wantedVariable) {
-        wantedVariable = generateUUID().replace(/-/g, '');
+        const currentEnvs = readFileSync(_envPath, 'utf8').split('\n').filter(env => env !== '');
 
+        // look for the variable in the .env file
+        const varInFile = currentEnvs.find(env => env.split('=')[0].trim() === variable);
 
-        appendFileSync(envFilePath(), `${variable}=${wantedVariable}\n`);
+        if (varInFile) {
+            wantedVariable = varInFile.split('=')[1].trim();
+        } else {
+            wantedVariable = generateUUID().replace(/-/g, '');
+            writeFileSync(_envPath, `${variable}=${wantedVariable}\n`, { flag: 'a' });
+        }
+
         process.env[variable] = wantedVariable;
     }
 
@@ -37,7 +41,6 @@ function getOrCreateEnv(variable: string): string {
 
 export const getSalt = (): string => getOrCreateEnv('SALT');
 export const getPepper = (): string => getOrCreateEnv('PEPPER');
-
 
 
 /**

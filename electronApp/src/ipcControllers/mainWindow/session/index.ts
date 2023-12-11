@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import autoLogin from '../../../backend/autoLogin';
+import landfillAPI from '../../../backend/landfill/API';
 import { IUserEncrypted, IUser } from '../../../backend/db/models';
 import { generateEncryptionKey } from '../../../backend/utils/_crypto';
 import { AppSettingsController, UserController } from '../../../backend/db/controllers';
@@ -24,6 +25,10 @@ let encryptionKey: Buffer | null = null;
 
 export function getEncryptionKey() {
     return encryptionKey;
+}
+
+export function getLoggedInUser() {
+    return loggedInUser;
 }
 
 export function setEncryptionKey(key: Buffer) {
@@ -54,6 +59,10 @@ export async function sessionLogin(user: IUser, encryptionPassword: string, encr
         const setting = decryptedSetting && Object.values(decryptedSetting)[0];
         setting && (process.env[key] = setting);
     }
+
+    // log  into the Landfill api
+
+    await landfillAPI.logInToUPCServer()
 }
 
 const handlers = () => {

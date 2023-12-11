@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { envFilePath } from '../utils/_crypto';
+import { envFilePath } from '../utils/env';
 import { IUserEncrypted, IUser } from '../db/models';
 import { validators } from '../../frontend/utils/validators';
 import { UserController } from '../../backend/db/controllers';
@@ -9,17 +9,18 @@ export const autoLogin = {
     enable: (encryptionKey: Buffer, currentUser: IUserEncrypted) => {
         // covert the encryption key to a hex string
         const hexKey = encryptionKey.toString('hex');
-        const envs = fs.readFileSync(envFilePath(), 'utf8').split('\n');
+        const _envFilePath = envFilePath();
+        const envs = fs.readFileSync(_envFilePath, 'utf8').split('\n');
 
         const autoLoginKeyLine = envs.find(env => env.includes('AUTO_LOGIN_KEY='));
         // if it exists, replace it with the new key
         if (autoLoginKeyLine) {
             const newAutoLoginKeyLine = `AUTO_LOGIN_KEY=${hexKey}`;
             const newEnvs = envs.map(env => env === autoLoginKeyLine ? newAutoLoginKeyLine : env).filter(env => env.length);
-            fs.writeFileSync(envFilePath(), newEnvs.join('\n') + '\n');
+            fs.writeFileSync(_envFilePath, newEnvs.join('\n') + '\n');
         } else {
             // if it doesn't exist, add it to the end of the file
-            fs.appendFileSync(envFilePath(), `AUTO_LOGIN_KEY=${hexKey}\n`);
+            fs.appendFileSync(_envFilePath, `AUTO_LOGIN_KEY=${hexKey}\n`);
         }
 
         const autoLoginUserLine = envs.find(env => env.includes('AUTO_LOGIN_USER='));
@@ -27,10 +28,10 @@ export const autoLogin = {
         if (autoLoginUserLine) {
             const newAutoLoginUserLine = `AUTO_LOGIN_USER=${currentUser.username}`;
             const newEnvs = envs.map(env => env === autoLoginUserLine ? newAutoLoginUserLine : env).filter(env => env.length);
-            fs.writeFileSync(envFilePath(), newEnvs.join('\n') + '\n');
+            fs.writeFileSync(_envFilePath, newEnvs.join('\n') + '\n');
         } else {
             // if it doesn't exist, add it to the end of the file
-            fs.appendFileSync(envFilePath(), `AUTO_LOGIN_USER=${currentUser.username}\n`);
+            fs.appendFileSync(_envFilePath, `AUTO_LOGIN_USER=${currentUser.username}\n`);
         }
 
         // add to process.env
@@ -39,13 +40,13 @@ export const autoLogin = {
     },
     disable: () => {
         console.log('autoLogin disable');
-
-        const envs = fs.readFileSync(envFilePath(), 'utf8').split('\n');
+        const _envFilePath = envFilePath();
+        const envs = fs.readFileSync(_envFilePath, 'utf8').split('\n');
         const newEnvs = envs
             .filter(env => !env.includes('AUTO_LOGIN_KEY=') && !env.includes('AUTO_LOGIN_USER='))
             .filter(env => env.length);
 
-        fs.writeFileSync(envFilePath(), newEnvs.join('\n') + '\n');
+        fs.writeFileSync(_envFilePath, newEnvs.join('\n') + '\n');
 
         delete process.env.AUTO_LOGIN_KEY;
         delete process.env.AUTO_LOGIN_USER;

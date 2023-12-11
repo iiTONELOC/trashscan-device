@@ -1,9 +1,11 @@
+import fs from 'fs';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
+import { envFilePath } from '../backend/utils/env';
 
+// create the envFilePath if it does not exist
+const doesEnvFileExist = fs.existsSync(envFilePath());
+if (!doesEnvFileExist) {
+    fs.writeFileSync(envFilePath(), '');
+}
 
-const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
-const envFilePath = path.join(process.cwd(), envFile);
-
-
-dotenv.config({ path: envFilePath });
+dotenv.config({ path: envFilePath() });

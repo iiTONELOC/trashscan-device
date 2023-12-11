@@ -47,11 +47,9 @@ export default function Setting(props: Readonly<SettingProps>): React.JSX.Elemen
             if (isAutoLogin) {
 
                 if (editorValue === 'true') {
-                    window.centralBridge.session.enableAutoLogin();
-                    console.log('Logging IN');
+                    await window.centralBridge.session.enableAutoLogin();
                 } else {
-                    console.log('Disabling Auto Login');
-                    window.centralBridge.session.disableAutoLogin()
+                    await window.centralBridge.session.disableAutoLogin()
                 }
             }
 
