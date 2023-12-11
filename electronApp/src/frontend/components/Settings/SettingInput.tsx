@@ -1,6 +1,7 @@
 
 import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 import SaveAndCancelButtons from '../SaveAndCancelButtons';
+import { useEffect, useRef } from 'preact/hooks';
 
 export interface ISettingInputProps {
     name: string;
@@ -23,6 +24,12 @@ export default function SettingInput(props: ISettingInputProps): React.JSX.Eleme
         handleShowEditorValue
     } = props;
 
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, [inputRef]);
+
     return (
         <div className='Setting-editor'>
             <span>
@@ -42,6 +49,7 @@ export default function SettingInput(props: ISettingInputProps): React.JSX.Eleme
                             }
                             <input
                                 id={name}
+                                ref={inputRef}
                                 type={showEditorValue ? 'text' : 'password'}
                                 value={editorValue}
                                 required

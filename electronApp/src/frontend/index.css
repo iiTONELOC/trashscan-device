@@ -20,12 +20,13 @@
 
   --margin: 1rem;
   --padding: 1rem;
-
+  scrollbar-width: thin;
   color: var(--light-gray-text)
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {

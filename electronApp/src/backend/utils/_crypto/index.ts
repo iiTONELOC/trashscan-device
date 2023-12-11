@@ -3,8 +3,12 @@ import crypto from 'crypto';
 import { appendFileSync } from 'fs';
 import { generateUUID } from '../uuid';
 
+const rootDir = () => process.cwd();
+const envFile = () => process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+export const envFilePath = () => path.join(rootDir(), envFile());
 
-const rootDir = process.cwd();
+
+
 
 export type EncryptionData = {
     iv: string;
@@ -21,10 +25,9 @@ function getOrCreateEnv(variable: string): string {
 
     if (!wantedVariable) {
         wantedVariable = generateUUID().replace(/-/g, '');
-        const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
-        const envFilePath = path.join(rootDir, envFile);
 
-        appendFileSync(envFilePath, `${variable}=${wantedVariable}\n`);
+
+        appendFileSync(envFilePath(), `${variable}=${wantedVariable}\n`);
         process.env[variable] = wantedVariable;
     }
 

@@ -9,10 +9,11 @@ import { ISettingsEncrypted, ISettings, appSettings as Settings, IEncryptionData
  * Decrypts an app setting into a plain text string
  * @param setting The encrypted setting object to decrypt
  * @param password The encryption password
+ * @param encryptionKey The optional encryption key
  * @returns The decrypted setting as a plain text string
  */
-export const decryptAppSetting = async (setting: ISettingsEncrypted, password: string): Promise<ISettings> => {
-    const key: Buffer = await generateEncryptionKey(password);
+export const decryptAppSetting = async (setting: ISettingsEncrypted, password: string, encryptionKey?: Buffer): Promise<ISettings> => {
+    const key: Buffer = encryptionKey ?? await generateEncryptionKey(password);
     const value: string = await decrypt(Object.values(setting)[0], '', key);
 
     return { [Object.keys(setting)[0]]: value };
@@ -102,9 +103,10 @@ export const getAppSetting = async (key: string): Promise<IEncryptionData | null
  *
  * @param key The key of the setting to get
  * @param password the password for the encryption key
+ * @param encryptionKey The optional encryption key
  * @returns The decrypted setting as a plain text key/value pair
  */
-export const getAppSettingDecrypted = async (key: string, password: string): Promise<ISettings | null> => {
+export const getAppSettingDecrypted = async (key: string, password: string, encryptionKey?: Buffer): Promise<ISettings | null> => {
     const db: IDB | null = await readDB();
     if (!db) {
         throw new Error(dbNotFoundErrorMsg);
@@ -123,7 +125,7 @@ export const getAppSettingDecrypted = async (key: string, password: string): Pro
         return null;
     }
 
-    return await decryptAppSetting({ [key]: setting }, password);
+    return await decryptAppSetting({ [key]: setting }, password, encryptionKey);
 }
 
 /**

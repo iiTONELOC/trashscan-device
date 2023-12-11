@@ -1,7 +1,6 @@
-import { IUserEncrypted } from '../../backend/db/models';
+import { ISettingsEncrypted, IUserEncrypted } from '../../backend/db/models';
 
-// eslint-disable-next-line
-// @ts-ignore
+
 const centralBridge = window.centralBridge;
 
 const defaultRequiredMsg = 'Required for signing into the TrashScan API';
@@ -13,7 +12,8 @@ export const defaultApplicationSettings: {
         { setting: 'username', description: defaultRequiredMsg },
         { setting: 'email', description: defaultRequiredMsg },
         { setting: 'deviceID', description: defaultRequiredMsg },
-        { setting: 'password', description: defaultRequiredMsg }
+        { setting: 'password', description: defaultRequiredMsg },
+        { setting: 'AUTO_LOGIN', description: 'Automatically login on startup. Set true or false.' },
     ];
 
 export async function checkForUsers(): Promise<boolean> {
@@ -55,7 +55,7 @@ export function getSettings(): Promise<string[]> {
     return centralBridge.appSettings.getSettings();
 }
 
-export async function getSetting(key: string): Promise<string> {
+export async function getSetting(key: string): Promise<ISettingsEncrypted> {
     const setting = await centralBridge.appSettings.getSetting(key);
     return setting
 }
@@ -68,6 +68,7 @@ export async function getSettingDecrypted(key: string, password: string): Promis
     const setting = await centralBridge.appSettings.getSettingDecrypted(key, password);
     return setting
 }
+
 
 export const API = {
     checkForUsers,

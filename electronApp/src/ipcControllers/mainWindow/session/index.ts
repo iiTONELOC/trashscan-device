@@ -1,7 +1,9 @@
 import { ipcMain } from 'electron';
+import autoLogin from '../../../backend/autoLogin';
 import { IUserEncrypted, IUser } from '../../../backend/db/models';
 import { generateEncryptionKey } from '../../../backend/utils/_crypto';
 import { AppSettingsController, UserController } from '../../../backend/db/controllers';
+
 
 /**
  * Requirements for logging a user into the session.
@@ -39,15 +41,16 @@ export function sessionLogout() {
  *
  * @param user The user object to encrypt and store in the session
  * @param encryptionPassword The password to encrypt the user with
+ * @param encryptionKey The optional encryption key
  */
-export async function sessionLogin(user: IUser, encryptionPassword: string) {
-    loggedInUser = await UserController.encryptUser(user, encryptionPassword);
+export async function sessionLogin(user: IUser, encryptionPassword: string, encryptionKey?: Buffer) {
+    loggedInUser = await UserController.encryptUser(user, encryptionPassword, encryptionKey);
 
     /**Add the app settings to the environment variables */
     const settingKeys = await AppSettingsController.getAppSettingKeys();
 
     for (const key of settingKeys) {
-        const decryptedSetting = await AppSettingsController.getAppSettingDecrypted(key, encryptionPassword);
+        const decryptedSetting = await AppSettingsController.getAppSettingDecrypted(key, encryptionPassword, encryptionKey);
         const setting = decryptedSetting && Object.values(decryptedSetting)[0];
         setting && (process.env[key] = setting);
     }
@@ -67,17 +70,26 @@ const handlers = () => {
     */
     ipcMain.handle('session-login', async (_, args: ILoginArgs): Promise<boolean> => {
         const { username, encryptionPassword }: ILoginArgs = args;
-        const user = await UserController.getUserBy.username(username, encryptionPassword);
+        let user = await UserController.getUserBy.username(username, encryptionPassword);
+
+        if (!user) return false;
 
         user && (await sessionLogin(user, encryptionPassword));
         user && (encryptionKey = await generateEncryptionKey(encryptionPassword));
-        return user ? true : false;
+        user = null;
+        return true;
     });
     /**
      * Logs the user out out of the session.
      * @returns A promise that resolves to nothing.
     */
     ipcMain.handle('session-logout', sessionLogout);
+
+    ipcMain.handle('session-enable-auto-login', async () => autoLogin.enable(encryptionKey, loggedInUser));
+
+    ipcMain.handle('session-disable-auto-login', async () => autoLogin.disable());
+
+    ipcMain.handle('session-auto-login', async (): Promise<boolean> => autoLogin.autoLoginUser(sessionLogin, setEncryptionKey));
 };
 
 export default handlers;

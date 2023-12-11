@@ -169,20 +169,21 @@ const getUserBy = {
      *
      * @param username the username to find
      * @param password the password for the encryption key
+     * @param encryptionKey Optional encryption key, one is generated if not provided
      * @returns Unencrypted user object if found, null otherwise
      */
-    async username(username: string, password: string): Promise<IUserModel | null> {
+    async username(username: string, password: string, encryptionKey?: Buffer): Promise<IUserModel | null> {
         const db: IDB | null = await readDB();
         // istanbul ignore next
         if (!db) {
             throw new Error(dbNotFoundErrorMsg);
         }
         // istanbul ignore next
-        if (!password || password.length === 0) {
+        if (!encryptionKey && (!password || password.length === 0)) {
             return null;
         }
 
-        const key: Buffer = await generateEncryptionKey(password);
+        const key: Buffer = encryptionKey ?? await generateEncryptionKey(password);
         const userObjects = [...Object.values(db.models.User)] as IUserEncrypted[];
         const foundUser = userObjects.find((user: IUserEncrypted) => user.username === username);
 

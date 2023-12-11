@@ -19,7 +19,7 @@ export interface IMainWindowIpcBridge {
          * Reads the database and returns all users.
          * @returns A promise that resolves with an array of encrypted user objects.
          */
-        readUsers: () => Promise<IUserEncrypted>;
+        readUsers: () => Promise<IUserEncrypted[]>;
 
         /**
          * Creates a user in the database.
@@ -50,6 +50,10 @@ export interface IMainWindowIpcBridge {
          * @returns A promise that resolves to nothing.
          */
         logout: () => Promise<void>;
+
+        enableAutoLogin: () => Promise<void>;
+        disableAutoLogin: () => Promise<void>;
+        autoLogin: () => Promise<boolean>;
     };
     /**
      * Available Methods for the app settings.
@@ -72,7 +76,7 @@ export interface IMainWindowIpcBridge {
          * @param password the encryption key password.
          * @returns a promise that resolves with the decrypted setting or null if the password was incorrect.
          */
-        getSettingDecrypted: (key: string, password: string) => Promise<ISettings | null>;
+        getSettingDecrypted: (key: string, password: string) => Promise<string | null>;
         /**
          * Adds a setting to the database.
          * @param key the key of the setting to add.
@@ -82,7 +86,7 @@ export interface IMainWindowIpcBridge {
          * password pass in an empty string.
          * @returns a promise that resolves to true if the setting was added successfully, otherwise false.
          */
-        addSetting: (key: string, value: string, password: string) => Promise<boolean>;
+        addSetting: (key: string, value: string, password?: string) => Promise<boolean>;
         /**
          * Update a setting's value in the database.
          * @param key the key of the setting to update.

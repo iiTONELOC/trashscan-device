@@ -79,25 +79,17 @@ export default function SignUpForm(): React.JSX.Element {
         e.stopPropagation();
 
         try {
-            // reset the form state
             setFormState(defaultFormState);
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             const created = await window.centralBridge.db.createUser({ ...formState });
-            console.log({ created })
+
             if (created && created === formState.username) {
-
-                // we need to create the device settings for the user using the formState and all the values
-
                 setSetting('username', formState.username);
                 setSetting('email', formState.email);
                 setSetting('deviceID', formState.deviceID);
                 setSetting('password', formState.password);
 
-
                 window.location.reload();
             }
-
         } catch (error) {
             setHasError(true);
         }

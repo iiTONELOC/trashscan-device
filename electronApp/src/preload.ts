@@ -20,7 +20,10 @@ const centralBridge: IMainWindowIpcBridge = {
     session: {
         getLoggedInUser: () => ipcRenderer.invoke('session-get-logged-in-user'),
         login: (args: ILoginArgs) => ipcRenderer.invoke('session-login', args),
-        logout: () => ipcRenderer.invoke('session-logout')
+        logout: () => ipcRenderer.invoke('session-logout'),
+        enableAutoLogin: () => ipcRenderer.invoke('session-enable-auto-login'),
+        disableAutoLogin: () => ipcRenderer.invoke('session-disable-auto-login'),
+        autoLogin: () => ipcRenderer.invoke('session-auto-login')
     },
     appSettings: {
         getSettings: () => ipcRenderer.invoke('appSettings-get-settings'),

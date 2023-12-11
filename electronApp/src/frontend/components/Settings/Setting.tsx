@@ -22,8 +22,6 @@ export default function Setting(props: Readonly<SettingProps>): React.JSX.Elemen
     const [value, setValue] = useState<string>('***************');
     const [showEditorValue, setShowEditorValue] = useState<boolean>(false);
 
-
-
     const handleEditorChange = (e: Event): void => {
         e.preventDefault();
         e.stopPropagation();
@@ -43,6 +41,21 @@ export default function Setting(props: Readonly<SettingProps>): React.JSX.Elemen
             setIsMissing(false);
             props.setLeaveOpen(true);
             props.onAdded(props.name);
+
+            // TODO: CHECK if the setting being set is the AUTO_LOGIN setting
+            const isAutoLogin = props.name === 'AUTO_LOGIN';
+            if (isAutoLogin) {
+
+                if (editorValue === 'true') {
+                    window.centralBridge.session.enableAutoLogin();
+                    console.log('Logging IN');
+                } else {
+                    console.log('Disabling Auto Login');
+                    window.centralBridge.session.disableAutoLogin()
+                }
+            }
+
+
         } else {
             setIsMissing(true);
             props.setLeaveOpen(false);

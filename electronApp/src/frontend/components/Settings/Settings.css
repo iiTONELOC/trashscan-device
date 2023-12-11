@@ -27,13 +27,12 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    height: fit-content;
+    height: 100%;
+    width: 100%;
     min-height: 180px;
-    max-height: 70vh;
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
-    overflow-y: scroll;
 }
 
 .Setting {
@@ -52,7 +51,6 @@
 .Setting:hover {
     background-color: var(--secondary-color);
 }
-
 
 .Setting-info {
     display: flex;
@@ -123,7 +121,6 @@
     color: white;
 }
 
-
 .Setting-input-control {
     display: flex;
     flex-direction: row;
@@ -143,8 +140,6 @@
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
-
-
 
 @media screen and (max-width: 568px) {
     .Secret>label {
