@@ -26,8 +26,6 @@ const checkIfDbFolderExists = () => {
         fs.mkdirSync(dbFolder);
     }
 }
-
-
 export interface IDB {
     dbName: string;
     createdAt: number;

@@ -1,19 +1,24 @@
 import { Header } from './Header';
 import { Confirm } from './Confirm';
-import { Settings } from './Settings';
-import { HandleRender } from './Renderer';
 import { ProductCard } from './ProductCard';
 import { ScannedItems } from './ScannedItems';
 import { RefreshPage } from './RefreshButton';
 import { DeviceSettings } from './DeviceSettings';
 
+import Loading from './Loading';
+import Settings from './Settings';
+import { Form, FormInput, FormAction } from './Forms';
+
 export {
     Header,
     Confirm,
-    Settings,
     ProductCard,
     RefreshPage,
     ScannedItems,
-    HandleRender,
-    DeviceSettings
+    DeviceSettings,
+    Loading,
+    Form,
+    FormInput,
+    FormAction,
+    Settings
 };

@@ -1,5 +1,185 @@
-.settings-container svg {
-    height: 40px;
-    width: 40px;
-    stroke: rgb(156, 156, 156);
+.Setting-modal-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.Setting-modal-info {
+    display: inline;
+    padding: 3px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.Red-span {
+    color: var(--error);
+    font-weight: 700;
+    font-size: 18px;
+    margin-right: 1px;
+}
+
+.Settings {
+    background-color: black;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: fit-content;
+    min-height: 180px;
+    max-height: 70vh;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    overflow-y: scroll;
+}
+
+.Setting {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    transition: background-color 0.2s ease-in-out;
+    height: min-content;
+}
+
+.Setting:hover {
+    background-color: var(--secondary-color);
+}
+
+
+.Setting-info {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.Secret>label {
+    font-size: 1.25rem;
+}
+
+.Setting-description {
+    width: 50%;
+    font-size: 16px;
+    text-align: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 3px;
+    color: rgb(199, 199, 199);
+}
+
+.Secret {
+    font-size: 1.25rem;
+    font-weight: 500;
+    display: inline-block;
+    margin: 2px
+}
+
+.Secret-p {
+    font-size: 1.25rem;
+    font-weight: 500;
+    display: inline-block;
+    margin: 2px;
+    color: var(--gray-text);
+}
+
+.Secret-p-missing {
+    color: var(--error);
+    cursor: pointer;
+}
+
+.Setting-action-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.Lock-icon, .Unlock-icon {
+    font-size: 1.25rem;
+    margin-left: 5px;
+}
+
+.Lock-icon:hover, .Unlock-icon:hover, .Pen-icon:hover {
+    scale: 1.25;
+    cursor: pointer;
+}
+
+.Pen-icon {
+    font-size: 1.25rem;
+    margin-left: 5px;
+    color: white;
+}
+
+
+.Setting-input-control {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.Setting-view-btn {
+    font-size: 1.17rem;
+    font-weight: 500;
+    color: var(--gray-text);
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+
+
+@media screen and (max-width: 568px) {
+    .Secret>label {
+        font-size: 1.0rem;
+    }
+
+    .Secret-p {
+        font-size: 1.0rem;
+    }
+
+    .Setting-description>p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 390px) {
+    .Setting-info {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .Secret {
+        width: 100%;
+    }
+
+    .Setting-description {
+        width: 100%;
+        text-align: start;
+        align-items: flex-start;
+    }
+
+    .Setting-description>div {
+        width: 100%;
+        text-align: end;
+        align-items: flex-end
+    }
 }

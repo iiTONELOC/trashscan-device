@@ -1,6 +1,8 @@
 import path from 'path';
 import './scripts/initDb';
 import './scripts/envloader';
+import { mainWindowIpcController } from './ipcControllers';
+import { sessionLogout } from './ipcControllers/mainWindow';
 
 
 import { app, BrowserWindow } from 'electron';
@@ -27,20 +29,29 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
-  // // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  // Open the DevTools.
+  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+  // Register all the IPC handlers. 
+  // This allows the main process to invoke functions in the renderer process.
+  for (const handler of Object.values(mainWindowIpcController)) {
+    handler();
+  }
+
+  createWindow();
+}).catch(e => { console.error(e) });
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    sessionLogout();
     app.quit();
   }
 });

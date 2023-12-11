@@ -1,0 +1,78 @@
+.MainView {
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.Main-header {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: var(--light-gray-text);
+    padding: 0 1rem;
+}
+
+
+.Dashboard-cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 775px;
+    min-width: 350px;
+    margin-top: 150px;
+    height: 100%;
+}
+
+.Dashboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--secondary-color);
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.9);
+    color: var(--light-gray-text);
+    width: 350px;
+    height: 150px;
+}
+
+.Dashboard-cards div:nth-last-of-type(n+2):hover {
+    background: var(--tertiary-color);
+    text-shadow: var(--text-shadow);
+}
+
+.Dashboard-cards div:nth-last-of-type(-n+2):hover {
+    cursor: pointer;
+    background: var(--primary-accent);
+    text-shadow: var(--text-shadow);
+    scale: 1.05;
+}
+
+/* should always appear in the top right of the page */
+.App-Settings-icon {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    /* margin: 1rem; */
+
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.App-Settings-icon:hover {
+    cursor: pointer;
+    scale: 1.25;
+    color: var(--secondary-accent);
+}

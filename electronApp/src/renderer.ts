@@ -27,11 +27,7 @@
  */
 
 
-import { render } from 'preact';
-import { HandleRender } from './frontend/components';
+import '../src/frontend'
 
 console.log('👋 This message is being logged by "renderer.ts", included via Vite');
 
-
-
-render(HandleRender(), document.body); // NOSONAR

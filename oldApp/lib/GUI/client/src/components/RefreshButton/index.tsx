@@ -1,4 +1,4 @@
-import React from 'react';
+
 import './RefreshButton.css';
 import { RefreshIcon } from '../Icons';
 

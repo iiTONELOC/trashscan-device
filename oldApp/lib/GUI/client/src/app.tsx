@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { SocketProvider, Header, ScannedItems, RefreshPage } from './components';
 
 

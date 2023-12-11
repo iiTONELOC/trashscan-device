@@ -95,9 +95,10 @@ export interface IMainWindowIpcBridge {
     }
 }
 
-export { default as ipcDbHandlers, ICreateUserArgs } from './db/index';
+export * from './db/index';
+export * from './session/index';
 export { default as ipcAppSettingsHandlers } from './appSettings/index';
-export { default as ipcSessionHandlers, ILoginArgs, sessionLogin, sessionLogout } from './session/index';
+export { default as ipcSessionHandlers } from './session/index';
 
 export default {
     ipcDbHandlers,
