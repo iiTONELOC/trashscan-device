@@ -1,0 +1,92 @@
+.Login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 50px;
+    height: 100vh;
+    width: 100%;
+    background: var(--primary-color);
+    margin-bottom: 25px;
+}
+
+.Login-form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 25px
+}
+
+.Login-form-header h1 {
+    font-size: 44px;
+    font-weight: 500;
+    margin: 1rem;
+}
+
+.Login-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1rem
+}
+
+.Login-info-heading {
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 50px
+}
+
+.Encryption-notice {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1rem;
+    font-weight: medium;
+    border-radius: 5px;
+    min-width: 350px;
+    width: 50%;
+    background-color: rgb(255, 94, 0);
+    box-shadow: 0 0 5px rgb(255, 94, 0)
+}
+
+.Encryption-notice h2 {
+    margin: -5px;
+}
+
+.Encryption-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    font-size: 1rem;
+    gap: 1rem;
+    font-weight: medium;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: var(--tertiary-color);
+    width: 99%;
+}
+
+.Encryption-info p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.Form-base {
+    display: block;
+    width: 50%;
+    max-width: 600px;
+    min-width: 350px;
+    background: var(--tertiary-color);
+    padding: var(--padding);
+    border-radius: 0.4rem;
+}
+
+input:focus {
+    border: none
+}

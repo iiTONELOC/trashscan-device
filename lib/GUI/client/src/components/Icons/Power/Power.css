@@ -1,8 +1,0 @@
-.power-fill {
-    fill: var(--gray-text);
-}
-
-.power-fill-hover {
-    fill: var(--primary-accent);
-    scale: 1.05;
-}

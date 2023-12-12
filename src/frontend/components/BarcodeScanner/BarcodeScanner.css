@@ -1,0 +1,12 @@
+.Barcode-scanner {
+    background-color: var(--background-color);
+    outline: none;
+    border: none;
+    padding: 20px;
+    cursor: none;
+    color: var(--background-color) !important;
+}
+
+input.Barcode-scanner {
+    color: var(--background-color) !important;
+}

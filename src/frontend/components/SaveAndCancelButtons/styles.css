@@ -1,0 +1,32 @@
+.Setting-editor-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.Setting-editor-buttons>button {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--light-gray-text);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 2px;
+    cursor: pointer;
+    filter: brightness(0.9);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.Settings-save-btn {
+    background-color: var(--primary-accent) !important;
+}
+
+.Settings-cancel-btn {
+    background-color: var(--error) !important;
+}
+
+.Setting-editor-buttons>button:hover {
+    scale: 1.05;
+    filter: brightness(1);
+}
