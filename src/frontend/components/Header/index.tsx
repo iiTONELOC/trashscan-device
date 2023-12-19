@@ -1,12 +1,6 @@
 import './Header.css';
-<<<<<<< HEAD:lib/GUI/client/src/components/Header/index.tsx
-// import { ConnectionState } from '../socketIO';
-import React, { useState, useEffect } from 'react';
-import { PowerAndRestart } from '../PowerRestart';
-=======
 import { JSX } from 'preact/compat';
 import { useState, useEffect } from 'preact/hooks';
->>>>>>> electron-conversion:src/frontend/components/Header/index.tsx
 
 
 export function Header(): JSX.Element {
@@ -62,12 +56,6 @@ export function Header(): JSX.Element {
             <p className='current-time'>{currentTime}</p>
 
             <section className='header-section'>
-<<<<<<< HEAD:lib/GUI/client/src/components/Header/index.tsx
-                {/* <ConnectionState /> */}
-                <PowerAndRestart />
-=======
-
->>>>>>> electron-conversion:src/frontend/components/Header/index.tsx
             </section>
 
         </div>

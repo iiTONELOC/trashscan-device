@@ -64,7 +64,6 @@ class LandFillAPI {
             variables: { barcode }
         };
 
-
         const addItemResponse = await fetch(this.upcServerURL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `${this.authToken}` },
@@ -73,11 +72,8 @@ class LandFillAPI {
 
         const addItemResponseJSON = await addItemResponse.json();
 
-
-
         const { data } = addItemResponseJSON;
         const { addItemToDefaultList } = data;
-
 
         return addItemToDefaultList;
     }

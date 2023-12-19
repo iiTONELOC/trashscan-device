@@ -36,7 +36,7 @@ export function ProductCard({ barcode, scannedAt, name }: IProductCardProps): JS
 
 
     return isMounted ? (
-        <div className={cardClass}>
+        <div className={'card'}>
             <header className={headerClass}>
                 <h2 className="card-title">
                     {name}

@@ -6,7 +6,7 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "test": "export NODE_ENV=test && ts-node src/scripts/initdb.ts && jest",
-    "start": "concurrently \"cd .. && cd .. && cd the-landfill && npm run dev\" \"electron-forge start\"",
+    "start": "concurrently \"cd .. && cd the-landfill && npm run dev\" \"export NODE_ENV=development  && electron-forge start\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

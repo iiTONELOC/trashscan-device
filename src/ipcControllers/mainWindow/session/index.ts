@@ -60,9 +60,11 @@ export async function sessionLogin(user: IUser, encryptionPassword: string, encr
         setting && (process.env[key] = setting);
     }
 
-    // log  into the Landfill api
-
-    await landfillAPI.logInToUPCServer()
+    try {
+        await landfillAPI.logInToUPCServer();
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 const handlers = () => {
@@ -94,7 +96,10 @@ const handlers = () => {
     */
     ipcMain.handle('session-logout', sessionLogout);
 
-    ipcMain.handle('session-enable-auto-login', async () => autoLogin.enable(encryptionKey, loggedInUser));
+    ipcMain.handle('session-enable-auto-login', async () => {
+        autoLogin.enable(encryptionKey, loggedInUser);
+        await landfillAPI.logInToUPCServer();
+    });
 
     ipcMain.handle('session-disable-auto-login', async () => autoLogin.disable());
 

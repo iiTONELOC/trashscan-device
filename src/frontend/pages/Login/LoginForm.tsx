@@ -69,6 +69,12 @@ export default function LoginForm(): React.JSX.Element {
         (async () => {
             const didAutoLogin = await window.centralBridge.session.autoLogin();
             if (didAutoLogin) {
+                try {
+                    await window.centralBridge.landFill.loginToUPCServer();
+                } catch (error) {
+                    console.error(error);
+                }
+
                 window.location.reload();
             }
         })()
