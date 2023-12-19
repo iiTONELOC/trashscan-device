@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import * as dotenv from 'dotenv';
 import { envFilePath } from '../backend/utils/env';
 
@@ -6,14 +7,19 @@ const filePath = envFilePath();
 // create the envFilePath if it does not exist
 const doesEnvFileExist = fs.existsSync(filePath);
 if (!doesEnvFileExist) {
-    const dirs = filePath.split('/');
+    // find the parent directory of the envFilePath
+    const dirs = filePath.split(path.sep);
+    // remove the file
     dirs.pop();
 
-    console.log('ENV', process.env.NODE_ENV)
+    // join the directories back together
+    const dirPath = dirs.join(path.sep);
 
-    const dirPath = dirs.join('/')
+    // check if the directory exists
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true })
+    }
 
-    fs.mkdirSync(dirPath)
     fs.writeFileSync(filePath, '');
 }
 

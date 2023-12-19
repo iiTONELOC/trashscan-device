@@ -1,8 +1,12 @@
-import path from 'path';
-import * as fs from 'fs';
+import { appDataFolderPath } from '../../utils';
 import models from './models';
+import * as fs from 'fs';
+import path from 'path';
 
-const dbFolder = '_db';
+
+
+
+const dbFolder = path.join(appDataFolderPath, '_db');
 
 // Determines the correct database file name based on the environment
 // istanbul ignore next
@@ -23,7 +27,7 @@ const _dbFileName = dbFileName();
 // checks that the database directory exists, and creates one if it does not
 const checkIfDbFolderExists = () => {
     if (!fs.existsSync(dbFolder)) {
-        fs.mkdirSync(dbFolder);
+        fs.mkdirSync(dbFolder, { recursive: true });
     }
 }
 export interface IDB {

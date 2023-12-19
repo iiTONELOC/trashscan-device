@@ -3,10 +3,7 @@
     outline: none;
     border: none;
     padding: 20px;
-    cursor: none;
-    color: var(--background-color) !important;
-}
-
-input.Barcode-scanner {
-    color: var(--background-color) !important;
+    cursor: pointer;
+    margin-bottom: -50px;
+    opacity: 0;
 }

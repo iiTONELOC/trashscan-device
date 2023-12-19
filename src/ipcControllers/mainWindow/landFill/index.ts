@@ -1,16 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 import { ipcMain } from 'electron';
+import { appDataFolderPath } from '../../../utils';
 import landfillAPI from '../../../backend/landfill/API';
 
-const scannedFolder = path.resolve(process.cwd(), './_scanned');
+
+const scannedFolder = path.resolve(appDataFolderPath, './_scanned');
 const scannedFilePath = path.resolve(scannedFolder, './scanned.json');
 
 const getScannedList = () => {
     // check if the scanned folder exists
     if (!fs.existsSync(scannedFolder)) {
         // if it doesn't, create it
-        fs.mkdirSync(scannedFolder);
+        fs.mkdirSync(scannedFolder, { recursive: true });
     }
 
     // if it does, check if the scanned.json file exists
