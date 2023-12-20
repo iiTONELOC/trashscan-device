@@ -6,7 +6,7 @@ const fiftyMinutes = 50 * 60 * 1000;
 class LandFillAPI {
     private authToken = '';
     private authTokenExpiresIn: number = fiftyMinutes;
-    private readonly upcServerURL: string = process.env.NODE_ENV === 'production' ?
+    private readonly upcServerURL: string = process.env.NODE_ENV !== 'development' ?
         'https://the-landfill.herokuapp.com/graphql' : 'http://localhost:3001/graphql';
 
 
