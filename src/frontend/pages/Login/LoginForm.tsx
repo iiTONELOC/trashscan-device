@@ -69,16 +69,10 @@ export default function LoginForm(): React.JSX.Element {
         (async () => {
             const didAutoLogin = await window.centralBridge.session.autoLogin();
 
-            console.log('AUTO LOGIN DETECTED:', { didAutoLogin })
             if (didAutoLogin) {
-                try {
-                    await window.centralBridge.landFill.loginToUPCServer();
-                    window.location.reload();
-                } catch (error) {
-                    console.error(error);
-                }
+                window.location.reload();
             }
-        })()
+        })();
         return () => {
             setIsMounted(false);
             setFormState(defaultFormState);

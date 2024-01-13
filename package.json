@@ -7,7 +7,7 @@
   "scripts": {
     "test": "export NODE_ENV=test && ts-node src/scripts/initDb.ts && jest",
     "dev": "concurrently \"cd .. && cd the-landfill && npm run dev\" \"export NODE_ENV=development && electron-forge start\"",
-    "start": "export NODE_ENV=production && electron-forge start\"",
+    "start": "export NODE_ENV=production && electron-forge start",
     "package": "export NODE_ENV=production electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

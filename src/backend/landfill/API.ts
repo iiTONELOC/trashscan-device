@@ -1,15 +1,17 @@
 import { getEncryptionKey, getLoggedInUser } from '../../ipcControllers';
 import { decrypt } from '../utils/_crypto';
 
-let authToken = '';
-let lastRefreshed = 0;
-const fiftyMinutes = 50 * 60 * 1000;
-let timeOut: NodeJS.Timeout | null = null;
-let authTokenExpiresIn: number = fiftyMinutes;
-const upcServerURL = (): string => process.env.NODE_ENV === 'production' ?
-    'https://the-landfill.herokuapp.com/graphql' : 'http://localhost:3001/graphql';
+
 
 class LandFillAPI {
+    authToken = '';
+    lastRefreshed = 0;
+    fiftyMinutes = 50 * 60 * 1000;
+    timeOut: NodeJS.Timeout | null = null;
+    authTokenExpiresIn: number = this.fiftyMinutes;
+
+    upcServerURL = (): string => process.env.NODE_ENV === 'production' ?
+        'https://the-landfill.herokuapp.com/graphql' : 'http://localhost:3001/graphql';
 
     async logInToUPCServer(): Promise<boolean> {
         const currentUser = getLoggedInUser();
@@ -30,7 +32,7 @@ class LandFillAPI {
             }
         };
 
-        const loginResponse = await fetch(upcServerURL(), {
+        const loginResponse = await fetch(this.upcServerURL(), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginMutation)
@@ -43,15 +45,15 @@ class LandFillAPI {
         const token = data?.loginUserDevice?.token;
 
         if (token) {
-            authToken = token;
-            lastRefreshed = Date.now();
+            this.authToken = token;
+            this.lastRefreshed = Date.now();
             // set a timer to refresh the token
-            timeOut && clearTimeout(timeOut);
+            this.timeOut && clearTimeout(this.timeOut);
 
-            timeOut = setTimeout(async () => {
-                authTokenExpiresIn = fiftyMinutes;
+            this.timeOut = setTimeout(async () => {
+                this.authTokenExpiresIn = this.fiftyMinutes;
                 await this.logInToUPCServer();
-            }, authTokenExpiresIn - 1000);
+            }, this.authTokenExpiresIn - 1000);
             return true;
         }
 
@@ -65,7 +67,7 @@ class LandFillAPI {
 
         // check if the last refreshed time is greater than the token expiration time
         // if it is then we need to log in again
-        if (lastRefreshed + authTokenExpiresIn < Date.now() || authToken === '') {
+        if (this.lastRefreshed + this.authTokenExpiresIn < Date.now() || this.authToken === '') {
             await this.logInToUPCServer();
         }
 
@@ -77,9 +79,9 @@ class LandFillAPI {
         };
 
         try {
-            const addItemResponse = await fetch(upcServerURL(), {
+            const addItemResponse = await fetch(this.upcServerURL(), {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `${authToken}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `${this.authToken}` },
                 body: JSON.stringify(addItemMutation)
             });
 

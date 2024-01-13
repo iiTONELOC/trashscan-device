@@ -98,4 +98,4 @@ _scanned/
 ~/.nvm/
 
 # p-lock
-.package-lock.json
+package-lock.json

@@ -95,7 +95,7 @@ export const autoLogin = {
 
 
     autoLoginUser: async (
-        sessionLogin: (user: IUser, encryptionPassword: string, encryptionKey?: Buffer) => Promise<void>,
+        sessionLogin: (user: IUser, encryptionPassword: string, encryptionKey?: Buffer) => Promise<boolean>,
         setEncryptionKey: (key: Buffer) => void
     ): Promise<boolean> => {
         const isAutoLoginEnabled = autoLogin.isEnabled();
@@ -114,15 +114,17 @@ export const autoLogin = {
 
         if (!decryptedSuccessfully) return false;
 
-        decryptedUser && (async () => {
-            await sessionLogin(decryptedUser, '', encryptionKey).then(async () => {
-                setEncryptionKey(encryptionKey);
+        if (decryptedUser) {
+            await sessionLogin(decryptedUser, '', encryptionKey)
 
-                landfillAPI.logInToUPCServer();
-            });
-        })();
+            setEncryptionKey(encryptionKey);
 
-        return true;
+            const loggedIn = await landfillAPI.logInToUPCServer();
+
+            return loggedIn
+        } else {
+            return false;
+        }
     }
 };
 

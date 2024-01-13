@@ -62,8 +62,10 @@ export async function sessionLogin(user: IUser, encryptionPassword: string, encr
 
     try {
         await landfillAPI.logInToUPCServer();
+        return true
     } catch (err) {
         console.log(err);
+        return false
     }
 }
 

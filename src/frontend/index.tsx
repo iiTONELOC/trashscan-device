@@ -9,7 +9,9 @@ import { checkForUsers, checkForLoggedInUser } from './utils/API';
 
 
 function RenderApp() {
+
     const [hasUsers, setHasUsers] = useState<boolean>(true);
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     const [loggedInUser, setLoggedInUser] = useState<IUserEncrypted | null>(null);
 
     const initViews = async (): Promise<void> => {
@@ -23,6 +25,9 @@ function RenderApp() {
 
     useEffect(() => {
         initViews();
+        setIsMounted(true);
+
+        return () => setIsMounted(false);
     }, []);
 
     const renderPage = (): React.JSX.Element => {
@@ -40,11 +45,11 @@ function RenderApp() {
         }
     };
 
-    return (
+    return isMounted ? (
         <div className='App'>
             {renderPage()}
         </div>
-    );
+    ) : <></>;
 }
 
 

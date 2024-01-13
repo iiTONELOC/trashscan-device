@@ -27,7 +27,7 @@ const getScannedList = () => {
 };
 
 const handlers = () => {
-    ipcMain.handle('landFill-login-to-upc-server', async () => landfillAPI.logInToUPCServer());
+    ipcMain.handle('landFill-login-to-upc-server', async () => await landfillAPI.logInToUPCServer());
     ipcMain.handle('landFill-add-item-to-users-default-list', async (_, item: string): Promise<any> => {
         const data = await landfillAPI.addItemToUsersDefaultList(item);
         return data;
