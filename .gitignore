@@ -96,3 +96,6 @@ _db/
 _settings/
 _scanned/
 ~/.nvm/
+
+# p-lock
+.package-lock.json

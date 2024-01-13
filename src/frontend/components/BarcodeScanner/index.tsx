@@ -39,10 +39,9 @@ export function BarcodeScanner(props: { onData: (data: any) => void }): React.JS
 
     useEffect(() => {
         if (isMounted && stopCapture) {
-            console.log('stopCapture', barcode);
             (async () => {
                 const added = await window.centralBridge.landFill.addItemToUsersDefaultList(barcode);
-                console.log('added', added);
+
                 added && (() => {
                     onData(added.product);
                     setBarcode('');

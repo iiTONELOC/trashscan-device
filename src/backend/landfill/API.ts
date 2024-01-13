@@ -39,10 +39,6 @@ class LandFillAPI {
         const loginResponseJSON = await loginResponse.json();
         const { data } = loginResponseJSON;
 
-        // // log any errors
-        // if (loginResponseJSON.errors) {
-        //     console.log('LOGIN ERROR:', loginResponseJSON.errors);
-        // }
 
         const token = data?.loginUserDevice?.token;
 
@@ -69,8 +65,7 @@ class LandFillAPI {
 
         // check if the last refreshed time is greater than the token expiration time
         // if it is then we need to log in again
-        if (lastRefreshed + authTokenExpiresIn < Date.now() || !authToken || authToken === '') {
-            // console.log('logging in again');
+        if (lastRefreshed + authTokenExpiresIn < Date.now() || authToken === '') {
             await this.logInToUPCServer();
         }
 
@@ -81,29 +76,23 @@ class LandFillAPI {
             variables: { barcode }
         };
 
-        // console.log({ addItemMutation, authToken });
+        try {
+            const addItemResponse = await fetch(upcServerURL(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `${authToken}` },
+                body: JSON.stringify(addItemMutation)
+            });
 
-        const addItemResponse = await fetch(upcServerURL(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `${authToken}` },
-            body: JSON.stringify(addItemMutation)
-        });
+            const addItemResponseJSON = await addItemResponse.json();
 
-        // console.log({ addItemResponse });
+            const { data } = addItemResponseJSON;
+            const { addItemToDefaultList } = data;
 
-        const addItemResponseJSON = await addItemResponse.json();
-
-        // console.log({ addItemResponseJSON });
-        // // log any errors
-        // if (addItemResponseJSON.errors) {
-        //     console.log(addItemResponseJSON.errors);
-        // }
-        // console.log()
-
-        const { data } = addItemResponseJSON;
-        const { addItemToDefaultList } = data;
-
-        return addItemToDefaultList;
+            return addItemToDefaultList;
+        } catch (error) {
+            console.error("Error adding item to default list!", error);
+            return null;
+        }
     }
 }
 

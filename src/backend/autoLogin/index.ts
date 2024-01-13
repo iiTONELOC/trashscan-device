@@ -40,7 +40,6 @@ export const autoLogin = {
         process.env.AUTO_LOGIN_KEY = hexKey;
     },
     disable: () => {
-        console.log('autoLogin disable');
         const _envFilePath = envFilePath();
         const envs = fs.readFileSync(_envFilePath, 'utf8').split('\n');
         const newEnvs = envs
@@ -107,7 +106,7 @@ export const autoLogin = {
 
 
         // get the user from the database
-        let decryptedUser = await UserController.getUserBy.username(username, '', encryptionKey);
+        const decryptedUser = await UserController.getUserBy.username(username, '', encryptionKey);
 
         if (!decryptedUser || decryptedUser === null) return false;
 
@@ -115,24 +114,14 @@ export const autoLogin = {
 
         if (!decryptedSuccessfully) return false;
 
-        console.log({
-            decryptedUser,
-            decryptedSuccessfully
-        })
-
         decryptedUser && (async () => {
             await sessionLogin(decryptedUser, '', encryptionKey).then(async () => {
                 setEncryptionKey(encryptionKey);
 
-                const didLogin = await landfillAPI.logInToUPCServer();
-
-                console.log('didLogin', didLogin);
-
-                console.log('Decrypted User', decryptedUser)
+                landfillAPI.logInToUPCServer();
             });
         })();
 
-        decryptedUser = null;
         return true;
     }
 };
