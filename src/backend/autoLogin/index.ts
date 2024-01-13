@@ -3,6 +3,7 @@ import { envFilePath } from '../utils/env';
 import { IUserEncrypted, IUser } from '../db/models';
 import { validators } from '../../frontend/utils/validators';
 import { UserController } from '../db/controllers';
+import landfillAPI from '../landfill/API';
 
 
 export const autoLogin = {
@@ -104,14 +105,32 @@ export const autoLogin = {
 
         const { username, encryptionKey } = autoLogin.get();
 
+
         // get the user from the database
         let decryptedUser = await UserController.getUserBy.username(username, '', encryptionKey);
+
+        if (!decryptedUser || decryptedUser === null) return false;
+
         const decryptedSuccessfully = decryptedUser.email.includes('@') && validators.isEmail(decryptedUser.email);
 
         if (!decryptedSuccessfully) return false;
 
-        decryptedUser && (await sessionLogin(decryptedUser, '', encryptionKey));
-        decryptedUser && (setEncryptionKey(encryptionKey));
+        console.log({
+            decryptedUser,
+            decryptedSuccessfully
+        })
+
+        decryptedUser && (async () => {
+            await sessionLogin(decryptedUser, '', encryptionKey).then(async () => {
+                setEncryptionKey(encryptionKey);
+
+                const didLogin = await landfillAPI.logInToUPCServer();
+
+                console.log('didLogin', didLogin);
+
+                console.log('Decrypted User', decryptedUser)
+            });
+        })();
 
         decryptedUser = null;
         return true;
