@@ -10,8 +10,8 @@ class LandFillAPI {
     timeOut: NodeJS.Timeout | null = null;
     authTokenExpiresIn: number = this.fiftyMinutes;
 
-    upcServerURL = (): string => process.env.NODE_ENV === 'production' ?
-        'https://the-landfill.herokuapp.com/graphql' : 'http://localhost:3001/graphql';
+    upcServerURL = (): string => (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') ?
+        'http://localhost:3001/graphql' : 'https://the-landfill.herokuapp.com/graphql';
 
     async logInToUPCServer(): Promise<boolean> {
         const currentUser = getLoggedInUser();
