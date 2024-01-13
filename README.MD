@@ -84,17 +84,14 @@ The items will appear in the user's default list. If a default list does not exi
 
 ## Tech Stack
 
-| Technology     | Description                                                       | Links                                                     |
-| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| Node           | JavaScript runtime environment                                    | [Node.js](https://nodejs.org/en/about)                    |
-| TypeScript     | JavaScript with syntax for types                                  | [TypeScript](https://www.typescriptlang.org/)             |
-| Express        | Minimalist web framework for Node.js                              | [Express](https://expressjs.com/)                         |
-| Mongoose ODM   | Object modeling for MongoDB and Node.js                           | [Mongoose](https://mongoosejs.com/)                       |
-| MongoDB        | NoSQL distributed document database                               | [MongoDB](https://www.mongodb.com/try/download/community) |
-| Electron       | Build Cross-Platform Desktop Apps using Web Technologies          | [Electron.js](https://www.electronjs.org/)                |
-| Electron Forge | All-in-One Tool for Packaging and Distributing Electron Apps      | [Electron Forge](https://www.electronforge.io/)           |
-| Preact         | 3kB replacement for React.js with the same API                    | [PREACT](https://preactjs.com/)                           |
-| Vite           | Front-end tooling and dev environment, replacing Create React App | [Vite](https://vitejs.dev/)                               |
+| Technology     | Description                                                       | Links                                           |
+| -------------- | ----------------------------------------------------------------- | ----------------------------------------------- |
+| Node           | JavaScript runtime environment                                    | [Node.js](https://nodejs.org/en/about)          |
+| TypeScript     | JavaScript with syntax for types                                  | [TypeScript](https://www.typescriptlang.org/)   |
+| Electron       | Build Cross-Platform Desktop Apps using Web Technologies          | [Electron.js](https://www.electronjs.org/)      |
+| Electron Forge | All-in-One Tool for Packaging and Distributing Electron Apps      | [Electron Forge](https://www.electronforge.io/) |
+| Preact         | 3kB replacement for React.js with the same API                    | [PREACT](https://preactjs.com/)                 |
+| Vite           | Front-end tooling and dev environment, replacing Create React App | [Vite](https://vitejs.dev/)                     |
 
 ## Contact
 
