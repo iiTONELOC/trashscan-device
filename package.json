@@ -5,10 +5,10 @@
   "description": "Scan barcodes and upload them to your TrashScanner Web App",
   "main": ".vite/build/main.js",
   "scripts": {
-    "test": "export NODE_ENV=test && ts-node src/scripts/initDb.ts && jest",
-    "dev": "concurrently \"cd .. && cd the-landfill && npm run dev\" \"export NODE_ENV=development && electron-forge start\"",
-    "start": "export NODE_ENV=production && electron-forge start",
-    "package": "export NODE_ENV=production electron-forge package",
+    "test": "cross-env NODE_ENV=test && ts-node src/scripts/initDb.ts && jest",
+    "dev": "concurrently \"cd .. && cd the-landfill && npm run dev\" \"electron-forge start\"",
+    "start": "cross-env NODE_ENV=development && electron-forge start",
+    "package": "cross-env NODE_ENV=production electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
@@ -32,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "electron": "28.0.0",
     "eslint": "^8.55.0",
     "eslint-plugin-import": "^2.29.0",
