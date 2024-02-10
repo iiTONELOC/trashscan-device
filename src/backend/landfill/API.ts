@@ -15,7 +15,7 @@ const regenDeviceKeyMutation = (deviceKey: string) => {
 const regenDeviceKey = async (deviceKey: string): Promise<string | null> => {
   try {
     const regenMutation = regenDeviceKeyMutation(deviceKey);
-    const regenResponse = await fetch('https://the-landfill.herokuapp.com/graphql', {
+    const regenResponse = await fetch(upcServerURL(), {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(regenMutation),
@@ -31,17 +31,17 @@ const regenDeviceKey = async (deviceKey: string): Promise<string | null> => {
   }
 };
 
+const upcServerURL = (): string =>
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+    ? 'http://localhost:3001/graphql'
+    : 'https://the-landfill.herokuapp.com/graphql';
+
 class LandFillAPI {
   authToken = '';
   lastRefreshed = 0;
   fiftyMinutes = 50 * 60 * 1000;
   timeOut: NodeJS.Timeout | null = null;
   authTokenExpiresIn: number = this.fiftyMinutes;
-
-  upcServerURL = (): string =>
-    process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
-      ? 'http://localhost:3001/graphql'
-      : 'https://the-landfill.herokuapp.com/graphql';
 
   async logInToUPCServer(): Promise<boolean> {
     const currentUser = getLoggedInUser();
@@ -100,7 +100,7 @@ class LandFillAPI {
       },
     };
 
-    const loginResponse = await fetch(this.upcServerURL(), {
+    const loginResponse = await fetch(upcServerURL(), {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(loginMutation),
@@ -145,7 +145,7 @@ class LandFillAPI {
     };
 
     try {
-      const addItemResponse = await fetch(this.upcServerURL(), {
+      const addItemResponse = await fetch(upcServerURL(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
