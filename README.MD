@@ -8,8 +8,6 @@
 
 TrashScan _The Device_&trade; is the smart barcode scanner that powers [TrashScan _The App&trade;_](https://github.com/iiTONELOC/trashscan-app). The Device, not only adds scanned barcodes to the user's default list, but it provides instant feedback regarding product information.
 
-The device consists of an [Odroid C4](https://www.hardkernel.com/shop/odroid-c4/) single-board computer powered by a 2.0 GHz quad-core Cortex A55 processor with an ARM64 architecture running Ubuntu MATE provided by HardKernel. A WiFi adapter provides wireless connectivity, and barcode input is captured using a [Symcode MJ-2090 Barcode Scanner](https://www.symcode.cn/product_4/47.html). This is convenient because it registers as an HID, which simplifies capturing the input. The LCD screen is currently only 2.8 inches but is being upgraded to a 5-inch screen, so new pictures to follow.
-
 ## Table of Contents
 
 - [TrashScan *The Device*™](#trashscan-the-device)
