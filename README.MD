@@ -54,20 +54,6 @@ upon opening the application. The encryption key is provided by you, the user, a
 
 ![Sign-up Screen, encryption warning](./assets/images/sign-up-min.png)
 
-After logging in, first-time users will have to set the AUTO_LOGIN variable to true.
-
-The behavior of this will be modified in the future. It is currently required to be set to true. This is because of a limitation of the LCD screen. The touch sensor translates touch to a mouse, and there is no virtual keyboard. Once a user has provided their credentials a mechanism has been provided for auto-login, bypassing the need to sign in every time the application is opened.
-
-![Settings](./assets/images/settings-min.png)
-
-Click on `AUTO_LOGIN` and set the value to `true`
-
-![AUTO_LOGIN](./assets/images/auto-login-min.png)
-
-Click on `Save` and close the modal by using the `X` button in the upper right-hand corner
-
-From now on, the device will sign in on its own.
-
 ### Scan Items
 
 A well-disguised HTML input element is auto-focused and waits for barcode input. The scanner mimics an HID device and rapidly sends keys. A user cannot type fast enough to type the barcodes in manually, a scanner must be used.
