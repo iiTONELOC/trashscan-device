@@ -1,7 +1,9 @@
 import {ipcMain} from 'electron';
-import {sessionLogin, setEncryptionKey} from '../session';
+import fs from 'fs';
+import {envFilePath} from '../../../backend/utils/env';
+import {sessionLogin, setEncryptionKey, getEncryptionKey} from '../session';
 import {UserController} from '../../../backend/db/controllers';
-import {getOrCreateEnv, generateEncryptionKey} from '../../../backend/utils/_crypto';
+import {generateEncryptionKey} from '../../../backend/utils/_crypto';
 /**
  * Requirements for creating a user.
  */
@@ -47,13 +49,11 @@ const handlers = () => {
     // set the expiration time for the device key which is 30 days from now into
     // process environment
     process.env.DEVICE_KEY_EXPIRES = (Date.now() + 30 * 24 * 60 * 60 * 1000).toString();
-    // persist the device key expiration time into the .env file by requesting it
-    // via the crypto module
-    let key = getOrCreateEnv('DEVICE_KEY_EXPIRES');
-    key = null;
+    // persist the device key expiration time to the .env file
+    fs.appendFileSync(envFilePath(), `DEVICE_KEY_EXPIRES=${process.env.DEVICE_KEY_EXPIRES}\n`);
 
-    user && (await sessionLogin(user, encryptionPassword));
     user && setEncryptionKey(await generateEncryptionKey(encryptionPassword));
+    user && (await sessionLogin(user, encryptionPassword, getEncryptionKey()));
     return user?.username ? user.username : null;
   });
 };

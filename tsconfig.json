@@ -2,9 +2,8 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "CommonJS",
     "allowJs": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
@@ -12,29 +11,18 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "paths": {
-      "react": [
-        "./node_modules/preact/compat/"
-      ],
-      "react-dom": [
-        "./node_modules/preact/compat/"
-      ],
-      "react/jsx-runtime": [
-        "./node_modules/preact/compat"
-      ],
-      "jest": [
-        "./node_modules/jest"
-      ]
+      "react": ["./node_modules/preact/compat/"],
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react/jsx-runtime": ["./node_modules/preact/compat"],
+      "jest": ["./node_modules/jest"]
     }
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "_db",
-    "out",
-    ".env*"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.spec.ts", "_db", "out", ".env*"]
 }

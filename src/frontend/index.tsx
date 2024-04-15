@@ -1,60 +1,48 @@
 import './index.css';
-import { render } from 'preact';
-import { Loading } from './components';
-import { IUserEncrypted } from '../backend/db/models';
-import React, { useEffect, useState } from 'preact/compat';
-import { LoginPage, SignUpPage, MainViewPage } from './pages';
-import { checkForUsers, checkForLoggedInUser } from './utils/API';
-
-
+import {render} from 'preact';
+import {Loading} from './components';
+import {IUserEncrypted} from '../backend/db/models';
+import React, {useEffect, useState} from 'preact/compat';
+import {LoginPage, SignUpPage, MainViewPage} from './pages';
+import {checkForUsers, checkForLoggedInUser} from './utils/API';
 
 function RenderApp() {
+  const [hasUsers, setHasUsers] = useState<boolean>(true);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [loggedInUser, setLoggedInUser] = useState<IUserEncrypted | null>(null);
 
-    const [hasUsers, setHasUsers] = useState<boolean>(true);
-    const [isMounted, setIsMounted] = useState<boolean>(false);
-    const [loggedInUser, setLoggedInUser] = useState<IUserEncrypted | null>(null);
+  const initViews = async (): Promise<void> => {
+    const hasUsers = await checkForUsers();
+    setHasUsers(hasUsers);
 
-    const initViews = async (): Promise<void> => {
-        const hasUsers = await checkForUsers();
-        setHasUsers(hasUsers);
+    const user = await checkForLoggedInUser();
+    setLoggedInUser(user);
+  };
 
-        const user = await checkForLoggedInUser();
-        setLoggedInUser(user);
-    };
+  useEffect(() => {
+    initViews();
+    setIsMounted(true);
 
+    return () => setIsMounted(false);
+  }, []);
 
-    useEffect(() => {
-        initViews();
-        setIsMounted(true);
+  const renderPage = (): React.JSX.Element => {
+    if (!hasUsers && !loggedInUser) {
+      return <SignUpPage />;
+    } else if (!loggedInUser && hasUsers) {
+      return <LoginPage />;
+    } else if (loggedInUser && hasUsers) {
+      return <MainViewPage />;
+    } else {
+      return <Loading />;
+    }
+  };
 
-        return () => setIsMounted(false);
-    }, []);
-
-    const renderPage = (): React.JSX.Element => {
-        if (!hasUsers && !loggedInUser) {
-            return <SignUpPage />;
-        }
-        else if (!loggedInUser && hasUsers) {
-            return <LoginPage />;
-        }
-        else if (loggedInUser && hasUsers) {
-            return <MainViewPage />;
-        }
-        else {
-            return <Loading />;
-        }
-    };
-
-    return isMounted ? (
-        <div className='App'>
-            {renderPage()}
-        </div>
-    ) : <></>;
+  return isMounted ? <div className="App">{renderPage()}</div> : <></>;
 }
 
-
 function FrontEnd(): void {
-    render(<RenderApp />, document.body);
+  render(<RenderApp />, document.body);
 }
 
 FrontEnd();

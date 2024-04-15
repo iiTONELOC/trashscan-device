@@ -1,6 +1,6 @@
 import fs from 'fs';
-import landfillAPI from '../landfill/API';
 import {envFilePath} from '../utils/env';
+import {landfillAPI} from '../landfill/API';
 import {UserController} from '../db/controllers';
 import {IUserEncrypted, IUser} from '../db/models';
 import {validators} from '../../frontend/utils/validators';
@@ -121,12 +121,9 @@ export const autoLogin = {
     if (!decryptedSuccessfully) return false;
 
     if (decryptedUser) {
-      await sessionLogin(decryptedUser, '', encryptionKey);
-
       setEncryptionKey(encryptionKey);
 
-      const loggedIn = await landfillAPI.logInToUPCServer();
-
+      const loggedIn = await sessionLogin(decryptedUser, '', encryptionKey);
       return loggedIn;
     } else {
       return false;

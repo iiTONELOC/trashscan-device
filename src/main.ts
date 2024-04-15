@@ -1,11 +1,10 @@
 import path from 'path';
 import './scripts/initDb';
 import './scripts/envloader';
-import { mainWindowIpcController } from './ipcControllers';
-import { sessionLogout } from './ipcControllers/mainWindow';
+import {mainWindowIpcController} from './ipcControllers';
+import {sessionLogout} from './ipcControllers/mainWindow';
 
-
-import { app, BrowserWindow } from 'electron';
+import {app, BrowserWindow} from 'electron';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -38,15 +37,15 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  // Register all the IPC handlers. 
+app.on('ready', () => {
+  // Register all the IPC handlers.
   // This allows the main process to invoke functions in the renderer process.
   for (const handler of Object.values(mainWindowIpcController)) {
     handler();
   }
 
   createWindow();
-}).catch(e => { console.error(e) });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

@@ -1,7 +1,11 @@
+import fs from 'fs';
+import {envFilePath} from '../utils/env';
 import {decrypt, getOrCreateEnv} from '../utils/_crypto';
 import {updateUser} from '../db/controllers/userController';
 import {getEncryptionKey, getLoggedInUser} from '../../ipcControllers';
 import {updateAppSetting} from '../db/controllers/appSettingsController';
+
+const DEVICE_KEY_EXPIRES = 'DEVICE_KEY_EXPIRES';
 
 const regenDeviceKeyMutation = (deviceKey: string) => {
   return {
@@ -53,14 +57,13 @@ class LandFillAPI {
     const decryptedDeviceKey = await decrypt(currentUser.deviceID, '', encryptionKey);
 
     //check to see if the deviceKey is expired
-    const deviceKeyExpires = getOrCreateEnv('DEVICE_KEY_EXPIRES');
+    const deviceKeyExpires = getOrCreateEnv(DEVICE_KEY_EXPIRES);
 
     if (deviceKeyExpires) {
       // if the device key is within 1 day of expiring, refresh it
       const deviceKeyExpiresDate = new Date(parseInt(deviceKeyExpires));
       const now = new Date();
       const oneDay = 24 * 60 * 60 * 1000;
-
       if (deviceKeyExpiresDate.getTime() - now.getTime() < oneDay) {
         // refresh the device key
         const newDeviceKey = await regenDeviceKey(decryptedDeviceKey);
@@ -85,7 +88,8 @@ class LandFillAPI {
 
         // update  the expiration time for the device key which is 30 days from now into
         process.env.DEVICE_KEY_EXPIRES = (Date.now() + 30 * 24 * 60 * 60 * 1000).toString();
-        getOrCreateEnv('DEVICE_KEY_EXPIRES');
+        // persist the device key expiration time to the .env file
+        fs.appendFileSync(envFilePath(), `DEVICE_KEY_EXPIRES=${process.env.DEVICE_KEY_EXPIRES}\n`);
       }
     }
 
