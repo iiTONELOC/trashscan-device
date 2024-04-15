@@ -2,7 +2,7 @@
 
 ## Screenshot
 
-![TrashScanner](./assets/images/trashscanner_screenshot-min.jpg)
+![TrashScanner](./assets/images/trashscanner_screenshot.png)
 
 ## Description
 
@@ -12,22 +12,20 @@ The device consists of an [Odroid C4](https://www.hardkernel.com/shop/odroid-c4/
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)  
-  - [Sign In](#sign-in)  
-  - [Scan Items](#scan-items)
-- [Demo](#demo)
-- [Tech Stack](#tech-stack)
-- [Contact](#contact)
-- [License](#license)
+- [TrashScan *The Device*™](#trashscan-the-device)
+  - [Screenshot](#screenshot)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Sign In](#sign-in)
+    - [Scan Items](#scan-items)
+  - [Demo](#demo)
+  - [Tech Stack](#tech-stack)
+  - [Contact](#contact)
+  - [LICENSE](#license)
 
 ## Installation
-
-Only a precompiled version for AArch64 is available to download: [TrashScan The Device - AArch64](https://github.com/iiTONELOC/trashscan-device/tree/download/linux/arm64/deb). MD5, SHA256/516 sums are available in the sums.txt file.
-
-If you wish to run the app on a different platform you will have to compile the code yourself.
-
-To do so, first, clone the repo:
 
 ```bash
 git clone https://github.com/iiTONELOC/trashscan-device.git
