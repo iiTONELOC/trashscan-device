@@ -7,18 +7,23 @@ import {updateAppSetting} from '../db/controllers/appSettingsController';
 
 const DEVICE_KEY_EXPIRES = 'DEVICE_KEY_EXPIRES';
 
-const regenDeviceKeyMutation = (deviceKey: string) => {
+const reGenDeviceKeyMutation = (deviceKey: string, user: {username: string; password: string}) => {
   return {
-    operationName: 'RegenerateDeviceKey',
+    operationName: 'RegenerateDeviceKeyFromDevice',
     query:
-      'mutation RegenerateDeviceKeyFromDevice($deviceKey: String!) {\r\n  regenerateDeviceKeyFromDevice(deviceKey: $deviceKey)\r\n}',
-    variables: {deviceKey},
+      'mutation RegenerateDeviceKeyFromDevice($deviceKey: String!, $username: String!, $password: String!) {\r\n  regenerateDeviceKeyFromDevice(deviceKey: $deviceKey, username: $username, password: $password)\r\n}',
+    variables: {deviceKey, username: user.username, password: user.password},
   };
 };
 
-const regenDeviceKey = async (deviceKey: string): Promise<string | null> => {
+const reGenDeviceKey = async (deviceKey: string): Promise<string | null> => {
   try {
-    const regenMutation = regenDeviceKeyMutation(deviceKey);
+    const user = getLoggedInUser();
+    const decryptedPassword = await decrypt(user.password, '', getEncryptionKey());
+    const regenMutation = reGenDeviceKeyMutation(deviceKey, {
+      username: user.username,
+      password: decryptedPassword,
+    });
     const regenResponse = await fetch(upcServerURL(), {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -54,7 +59,7 @@ class LandFillAPI {
     // to login we need username, password and deviceID, as the deviceKey
 
     const decryptedPassword = await decrypt(currentUser.password, '', encryptionKey);
-    const decryptedDeviceKey = await decrypt(currentUser.deviceID, '', encryptionKey);
+    let decryptedDeviceKey = await decrypt(currentUser.deviceID, '', encryptionKey);
 
     //check to see if the deviceKey is expired
     const deviceKeyExpires = getOrCreateEnv(DEVICE_KEY_EXPIRES);
@@ -62,11 +67,15 @@ class LandFillAPI {
     if (deviceKeyExpires) {
       // if the device key is within 1 day of expiring, refresh it
       const deviceKeyExpiresDate = new Date(parseInt(deviceKeyExpires));
+
       const now = new Date();
       const oneDay = 24 * 60 * 60 * 1000;
-      if (deviceKeyExpiresDate.getTime() - now.getTime() < oneDay) {
+      if (
+        deviceKeyExpiresDate.getTime() - now.getTime() < oneDay ||
+        deviceKeyExpiresDate.getTime() < now.getTime()
+      ) {
         // refresh the device key
-        const newDeviceKey = await regenDeviceKey(decryptedDeviceKey);
+        const newDeviceKey = await reGenDeviceKey(decryptedDeviceKey);
 
         if (!newDeviceKey) return false;
         // we need to update the device key in the user object
@@ -90,6 +99,8 @@ class LandFillAPI {
         process.env.DEVICE_KEY_EXPIRES = (Date.now() + 30 * 24 * 60 * 60 * 1000).toString();
         // persist the device key expiration time to the .env file
         fs.appendFileSync(envFilePath(), `DEVICE_KEY_EXPIRES=${process.env.DEVICE_KEY_EXPIRES}\n`);
+
+        decryptedDeviceKey = newDeviceKey;
       }
     }
 
@@ -138,6 +149,7 @@ class LandFillAPI {
     // check if the last refreshed time is greater than the token expiration time
     // if it is then we need to log in again
     if (this.lastRefreshed + this.authTokenExpiresIn < Date.now() || this.authToken === '') {
+      console.log('Token is stale, logging in again...');
       await this.logInToUPCServer();
     }
 
@@ -159,6 +171,8 @@ class LandFillAPI {
       });
 
       const addItemResponseJSON = await addItemResponse.json();
+
+      console.log('Add Item Response\n', addItemResponseJSON);
 
       const {data} = addItemResponseJSON;
       const {addItemToDefaultList} = data;
