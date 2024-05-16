@@ -10,8 +10,8 @@ export interface IScannedItem {
   productData: {
     barcode: string[];
     name: string;
-    _id: string;
   };
+  _id: string;
 }
 
 const toDate = (stringDate: string): Date => new Date(stringDate);
@@ -48,13 +48,13 @@ export function ScannedItems(): JSX.Element {
       <BarcodeScanner onData={handleUpdate} />
       {scannedItems
         .toSorted((a, b) => toDate(b.addedAt).getTime() - toDate(a.addedAt).getTime())
-        .map((item, index) => {
+        .map(item => {
           const props: IProductCardProps = {
             barcode: item.productData.barcode[0],
             scannedAt: item.addedAt,
             name: item.productAlias ?? item.productData.name,
           };
-          return <ProductCard key={`${item.productData._id}-${index}`} {...props} />;
+          return <ProductCard key={`${item._id}-${item.addedAt}`} {...props} />;
         })}
     </section>
   ) : (

@@ -31,7 +31,6 @@ const handlers = () => {
     'landFill-add-item-to-users-default-list',
     async (_, item: string): Promise<any> => {
       const data = await landfillAPI.addItemToUsersDefaultList(item);
-      console.log("Add item to user's default list\n", data);
       return data;
     },
   );

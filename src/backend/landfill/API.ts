@@ -1,6 +1,7 @@
 import {IUserEncrypted} from '../db/models';
 import {decrypt, getOrCreateEnv} from '../utils/_crypto';
-import {checkDeviceKeyExpired, loginMutation, upcServerURL} from './helpers';
+import {addItemMutation, loginMutation} from './mutations';
+import {checkDeviceKeyExpired, upcServerURL} from './helpers';
 import {getEncryptionKey, getLoggedInUser} from '../../ipcControllers';
 
 const DEVICE_KEY_EXPIRES = 'DEVICE_KEY_EXPIRES';
@@ -18,24 +19,18 @@ class LandFillAPI {
 
     // to login we need username, password and deviceID, as the deviceKey
     const decryptedPassword = await decrypt(currentUser.password, '', encryptionKey);
-    let decryptedDeviceKey = await decrypt(currentUser.deviceID, '', encryptionKey);
+    let decryptedDeviceKey: string = await decrypt(currentUser.deviceID, '', encryptionKey);
 
     //check to see if the deviceKey is expired
-    const deviceKeyExpires = getOrCreateEnv(DEVICE_KEY_EXPIRES);
+    decryptedDeviceKey =
+      (await checkDeviceKeyExpired(
+        getOrCreateEnv(DEVICE_KEY_EXPIRES),
+        decryptedDeviceKey,
+        currentUser.username,
+        decryptedPassword,
+      )) ?? decryptedDeviceKey;
 
-    // if the env exists then check if the device key is expired
-    if (deviceKeyExpires) {
-      decryptedDeviceKey =
-        (await checkDeviceKeyExpired(
-          deviceKeyExpires,
-          decryptedDeviceKey,
-          currentUser,
-          decryptedPassword,
-        )) ?? decryptedDeviceKey;
-    } else {
-      console.log('Device Key Expires not found in env');
-      return false;
-    }
+    if (!decryptedDeviceKey) return false;
 
     const lm = loginMutation(currentUser.username, decryptedPassword, decryptedDeviceKey);
 
@@ -67,22 +62,11 @@ class LandFillAPI {
   }
 
   async addItemToUsersDefaultList(barcode: string) {
-    // ensure that we are logged in, if something interrupts the timeOut like a screen lock or something
-    // we will need to ensure the token isn't stale
-
     // check if the last refreshed time is greater than the token expiration time
     // if it is then we need to log in again
     if (this.lastRefreshed + this.authTokenExpiresIn < Date.now() || this.authToken === '') {
-      console.log('Token is stale, logging in again...');
       await this.logInToUPCServer();
     }
-
-    const addItemMutation = {
-      operationName: 'addItemToDefaultList',
-      query: `mutation addItemToDefaultList($barcode: String!) {addItemToDefaultList(barcode: $barcode)
-                 {_id isCompleted listId notes quantity product {_id productAlias productData {barcode name}}}}`,
-      variables: {barcode},
-    };
 
     try {
       const addItemResponse = await fetch(upcServerURL(), {
@@ -91,14 +75,10 @@ class LandFillAPI {
           'Content-Type': 'application/json',
           Authorization: `${this.authToken}`,
         },
-        body: JSON.stringify(addItemMutation),
+        body: JSON.stringify(addItemMutation(barcode)),
       });
 
-      const addItemResponseJSON = await addItemResponse.json();
-
-      console.log('Add Item Response\n', addItemResponseJSON);
-
-      const {data} = addItemResponseJSON;
+      const {data} = await addItemResponse.json();
       const {addItemToDefaultList} = data;
 
       return addItemToDefaultList;
