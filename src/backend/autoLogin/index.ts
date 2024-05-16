@@ -1,6 +1,5 @@
 import fs from 'fs';
 import {envFilePath} from '../utils/env';
-import {landfillAPI} from '../landfill/API';
 import {UserController} from '../db/controllers';
 import {IUserEncrypted, IUser} from '../db/models';
 import {validators} from '../../frontend/utils/validators';
