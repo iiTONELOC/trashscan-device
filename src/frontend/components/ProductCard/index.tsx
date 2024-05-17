@@ -34,7 +34,7 @@ export function ProductCard({barcode, scannedAt, name}: IProductCardProps): JSX.
   }, [isMounted]);
 
   return isMounted ? (
-    <div className={'card'}>
+    <li className={'card'}>
       <header className={headerClass}>
         <h2 className="card-title">{name}</h2>
       </header>
@@ -43,7 +43,7 @@ export function ProductCard({barcode, scannedAt, name}: IProductCardProps): JSX.
         <p className="card-description">Barcode: {barcode} </p>
         <p className="card-created-at">Scanned: {formattedTime}</p>
       </div>
-    </div>
+    </li>
   ) : (
     <></>
   );

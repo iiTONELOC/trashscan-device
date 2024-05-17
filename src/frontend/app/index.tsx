@@ -1,35 +1,45 @@
 import '../index.css';
 import {useState, useEffect} from 'preact/hooks';
-import {VscSettingsGear} from 'react-icons/vsc';
 import {checkForAddedSettings} from '../utils/API';
-import {Header, ScannedItems, RefreshPage, Settings} from '../components';
+import {Header, ScannedItems, Settings} from '../components';
 
 const App = () => {
-  const [shouldShowModal, setShouldShowModal] = useState<boolean>(false);
-  const [lastSettingAdded, setLastSettingAdded] = useState<string>('');
   const [missingKeys, setMissingKeys] = useState<string[]>([]);
+  const [lastSettingAdded, setLastSettingAdded] = useState<string>('');
+  const [shouldShowSettingsModal, setShouldShowSettingsModal] = useState<boolean>(false);
+  const [shouldShowManualEntryModal, setShouldShowManualEntryModal] = useState<boolean>(false);
 
+  /**
+   * Check if all settings have been added
+   */
   const checkForSettings = async (): Promise<boolean> => {
     const settings = await checkForAddedSettings();
-    setShouldShowModal(!settings.found);
+
     setMissingKeys(settings.missing);
+    setShouldShowSettingsModal(!settings.found);
 
     return settings.found;
   };
 
-  // On close, check if all settings have been added
-  // If they haven't the model will automagically reopen
-  const handleModalClose = () => {
+  /**
+   * Handle the settings modal close event
+   */
+  const handleSettingsModalClose = () => {
     setTimeout(() => {
       checkForSettings();
     }, 250);
   };
 
+  /**
+   * When the component mounts check for settings
+   */
   useEffect(() => {
     checkForSettings();
   }, []);
 
-  // check if the modal should be shown when a new setting is added
+  /**
+   * When a setting is added, check for settings
+   */
   useEffect(() => {
     if (lastSettingAdded && lastSettingAdded.length > 0) {
       checkForSettings();
@@ -38,26 +48,29 @@ const App = () => {
 
   return (
     <>
-      <Header />
-      <RefreshPage />
-      <ScannedItems />
+      <Header
+        setShouldShowSettingsModal={setShouldShowSettingsModal}
+        shouldShowSettingsModal={shouldShowSettingsModal}
+        shouldShowManualEntryModal={shouldShowManualEntryModal}
+        setShouldShowManualEntryModal={setShouldShowManualEntryModal}
+      />
+      {/* Main Content */}
+      <ScannedItems
+        shouldShowManualEntryModal={shouldShowManualEntryModal}
+        setShouldShowManualEntryModal={setShouldShowManualEntryModal}
+      />
+
+      {/* Modals */}
       <Settings
         title={'Settings'}
-        setOpen={shouldShowModal}
-        onClose={handleModalClose}
-        setShow={() => setShouldShowModal(!shouldShowModal)}
+        setOpen={shouldShowSettingsModal}
+        onClose={handleSettingsModalClose}
+        setShow={() => setShouldShowSettingsModal(!shouldShowSettingsModal)}
         missingSettings={{
           missing: missingKeys,
           found: missingKeys.length === 0,
           handleSettingAdded: (setting: string) => setLastSettingAdded(setting),
         }}
-      />
-
-      <VscSettingsGear
-        /** eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         * @ts-ignore */
-        className="App-Settings-icon"
-        onClick={() => setShouldShowModal(!shouldShowModal)}
       />
     </>
   );

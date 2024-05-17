@@ -16,6 +16,7 @@
   --gray: #2d343f;
   --amber: #ffbf00;
   --error: #d60202;
+  --error-accent: #ff0000;
 
   --margin: 1rem;
   --padding: 1rem;
@@ -41,6 +42,7 @@
 
 html {
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 
@@ -49,6 +51,7 @@ body {
   font-family: Arial, sans-serif;
   min-height: 150px;
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 

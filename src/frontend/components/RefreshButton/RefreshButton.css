@@ -1,12 +1,11 @@
 .refresh-button {
-  position: fixed;
-  top: 40px;
-  left: 50%;
   transform: translateX(-50%);
   z-index: 999999999;
   background-color: transparent;
   border: none;
   cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: -55px;
 }
 
 .refresh-button:hover {

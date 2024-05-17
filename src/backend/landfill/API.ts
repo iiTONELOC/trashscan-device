@@ -6,6 +6,22 @@ import {getEncryptionKey, getLoggedInUser} from '../../ipcControllers';
 
 const DEVICE_KEY_EXPIRES = 'DEVICE_KEY_EXPIRES';
 
+export interface IAddedItem {
+  _id: string;
+  isCompleted: boolean;
+  listID: string;
+  notes: string | null;
+  quantity: number;
+  product: {
+    _id: string;
+    productAlias: string | null;
+    productData: {
+      barcode: string[];
+      name: string;
+    };
+  };
+}
+
 class LandFillAPI {
   authToken = '';
   lastRefreshed = 0;
@@ -61,7 +77,7 @@ class LandFillAPI {
     return false;
   }
 
-  async addItemToUsersDefaultList(barcode: string) {
+  async addItemToUsersDefaultList(barcode: string): Promise<IAddedItem> {
     // check if the last refreshed time is greater than the token expiration time
     // if it is then we need to log in again
     if (this.lastRefreshed + this.authTokenExpiresIn < Date.now() || this.authToken === '') {

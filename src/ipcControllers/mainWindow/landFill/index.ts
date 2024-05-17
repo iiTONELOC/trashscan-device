@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {ipcMain} from 'electron';
 import {appDataFolderPath} from '../../../utils';
-import {landfillAPI} from '../../../backend/landfill/API';
+import {landfillAPI, IAddedItem} from '../../../backend/landfill/API';
 
 const scannedFolder = path.resolve(appDataFolderPath, './_scanned');
 const scannedFilePath = path.resolve(scannedFolder, './scanned.json');
@@ -29,8 +29,8 @@ const handlers = () => {
   ipcMain.handle('landFill-login-to-upc-server', async () => await landfillAPI.logInToUPCServer());
   ipcMain.handle(
     'landFill-add-item-to-users-default-list',
-    async (_, item: string): Promise<any> => {
-      const data = await landfillAPI.addItemToUsersDefaultList(item);
+    async (_, item: string): Promise<IAddedItem> => {
+      const data: IAddedItem = await landfillAPI.addItemToUsersDefaultList(item);
       return data;
     },
   );
@@ -38,7 +38,7 @@ const handlers = () => {
     const scannedList = getScannedList();
     return scannedList;
   });
-  ipcMain.handle('landFill-add-item-to-scanned-list', (_, item: string) => {
+  ipcMain.handle('landFill-add-item-to-scanned-list', (_, item: IAddedItem['product']) => {
     const scannedList = getScannedList();
     scannedList.push(item);
     fs.writeFileSync(scannedFilePath, JSON.stringify(scannedList));

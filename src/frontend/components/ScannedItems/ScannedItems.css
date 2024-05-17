@@ -1,17 +1,24 @@
 .list-container {
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-flow: column;
-    background-color: var(--primary-color);
-    justify-content: flex-start;
-    align-items: center;
-    gap: 15px;
-    overflow-y: auto
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-flow: column;
+  background-color: var(--primary-color);
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.refresh {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 @media screen and (max-width: 600px) {
-    .list-container {
-        padding: var(--padding)
-    }
+  .list-container {
+    padding: var(--padding);
+  }
 }
