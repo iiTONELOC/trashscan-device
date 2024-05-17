@@ -1,8 +1,8 @@
 import {IUserEncrypted} from '../db/models';
 import {decrypt, getOrCreateEnv} from '../utils/_crypto';
-import {addItemMutation, loginMutation} from './mutations';
 import {checkDeviceKeyExpired, upcServerURL} from './helpers';
 import {getEncryptionKey, getLoggedInUser} from '../../ipcControllers';
+import {addItemMutation, loginMutation, updateAliasMutation} from './mutations';
 
 const DEVICE_KEY_EXPIRES = 'DEVICE_KEY_EXPIRES';
 
@@ -12,6 +12,7 @@ export interface IAddedItem {
   listID: string;
   notes: string | null;
   quantity: number;
+  addedAt: string | null | undefined;
   product: {
     _id: string;
     productAlias: string | null;
@@ -100,6 +101,33 @@ class LandFillAPI {
       return addItemToDefaultList;
     } catch (error) {
       console.error('Error adding item to default list!', error);
+      return null;
+    }
+  }
+
+  async editItemInDefaultList(itemId: string, productAlias: string): Promise<IAddedItem | null> {
+    // check if the last refreshed time is greater than the token expiration time
+    // if it is then we need to log in again
+    if (this.lastRefreshed + this.authTokenExpiresIn < Date.now() || this.authToken === '') {
+      await this.logInToUPCServer();
+    }
+
+    try {
+      const addItemResponse = await fetch(upcServerURL(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${this.authToken}`,
+        },
+        body: JSON.stringify(updateAliasMutation(itemId, productAlias)),
+      });
+
+      const {data} = await addItemResponse.json();
+      const {updateUserProduct} = data;
+
+      return updateUserProduct;
+    } catch (error) {
+      console.error('Error adding item in default list!', error);
       return null;
     }
   }

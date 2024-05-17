@@ -1,12 +1,13 @@
 import './ScannedItems.css';
 import {JSX} from 'preact/compat';
+import RenameItem from '../RenameItem';
 import ManualEntry from '../ManualEntry';
 import {RefreshPage} from '../RefreshButton';
 import {BarcodeScanner} from '../BarcodeScanner';
 import {useState, useEffect} from 'preact/hooks';
+import {IAddedItem} from '../../../backend/landfill/API';
 import {ProductCard, IProductCardProps} from '../ProductCard';
-
-export interface IScannedItem {
+export interface IScannedItem extends IAddedItem {
   addedAt: string;
   productAlias: string | null;
   productData: {
@@ -26,8 +27,10 @@ const toDate = (stringDate: string): Date => new Date(stringDate);
 export function ScannedItems(props: ScannedItemsProps): JSX.Element {
   const [isMounted, setIsMounted] = useState<boolean | null>(false);
   const [scannedItems, setScannedItems] = useState<IScannedItem[]>([]);
+  const [showAliasModal, setShowAliasModal] = useState<boolean>(false);
+  const [productToRename, setProductToRename] = useState<IAddedItem['product'] | null>(null);
 
-  const handleUpdate = async (data: any) => {
+  const handleAddItem = async (data: any) => {
     data = {
       ...data,
       addedAt: new Date(Date.now()).toUTCString(),
@@ -38,8 +41,18 @@ export function ScannedItems(props: ScannedItemsProps): JSX.Element {
 
   const handleManualEntryModalClose = () => props.setShouldShowManualEntryModal(false);
 
+  const handleRenameItem = () => {
+    (async () => {
+      const updated = await window.centralBridge.landFill.getScannedList();
+      if (updated) {
+        setScannedItems(updated);
+      }
+    })();
+  };
+
   useEffect(() => {
     setIsMounted(true);
+    setShowAliasModal(false);
     (async () => {
       const existingItems = await window.centralBridge.landFill.getScannedList();
       if (existingItems) {
@@ -49,8 +62,16 @@ export function ScannedItems(props: ScannedItemsProps): JSX.Element {
 
     return () => {
       setIsMounted(null);
+      setScannedItems([]);
+      setShowAliasModal(false);
     };
   }, []);
+
+  useEffect(() => {
+    if (!props.shouldShowManualEntryModal) {
+      setProductToRename(null);
+    }
+  }, [props.shouldShowManualEntryModal]);
 
   return isMounted ? (
     <>
@@ -58,14 +79,15 @@ export function ScannedItems(props: ScannedItemsProps): JSX.Element {
         <RefreshPage />
       </div>
       <ul className="list-container">
-        <BarcodeScanner onData={handleUpdate} />
+        <BarcodeScanner onData={handleAddItem} />
         {scannedItems
           .toSorted((a, b) => toDate(b.addedAt).getTime() - toDate(a.addedAt).getTime())
           .map(item => {
             const props: IProductCardProps = {
-              barcode: item.productData.barcode[0],
-              scannedAt: item.addedAt,
-              name: item.productAlias ?? item.productData.name,
+              product: item,
+              addedAt: item.addedAt,
+              setShowAliasModal,
+              setProductToRename,
             };
             return <ProductCard key={`${item._id}-${item.addedAt}`} {...props} />;
           })}
@@ -76,7 +98,17 @@ export function ScannedItems(props: ScannedItemsProps): JSX.Element {
         setOpen={props.shouldShowManualEntryModal}
         onClose={handleManualEntryModalClose}
         setShow={props.setShouldShowManualEntryModal}
-        onAddItem={handleUpdate}
+        onAddItem={handleAddItem}
+      />
+
+      {/* Alias Modal */}
+      <RenameItem
+        title="Rename Item"
+        setOpen={showAliasModal}
+        onClose={() => setShowAliasModal(false)}
+        setShow={setShowAliasModal}
+        product={{...productToRename}}
+        onRenamed={handleRenameItem}
       />
     </>
   ) : (

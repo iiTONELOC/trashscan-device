@@ -10,9 +10,16 @@ export const loginMutation = (username: string, password: string, deviceKey: str
 export const addItemMutation = (barcode: string) => {
   return {
     operationName: 'addItemToDefaultList',
-    query: `mutation addItemToDefaultList($barcode: String!) {addItemToDefaultList(barcode: $barcode)
-                 {_id isCompleted listId notes quantity product {_id productAlias productData {barcode name}}}}`,
+    query: `mutation addItemToDefaultList($barcode: String!) {addItemToDefaultList(barcode: $barcode){_id isCompleted listId notes quantity product {_id productAlias productData {barcode name}}}}`,
     variables: {barcode},
+  };
+};
+
+export const updateAliasMutation = (userProductId: string, alias: string) => {
+  return {
+    operationName: 'UpdateAlias',
+    query: `mutation UpdateAlias($userProductId: ID!, $productAlias: String) { updateUserProduct(userProductId: $userProductId, productAlias: $productAlias) { _id createdAt productAlias productData { barcode createdAt } updatedAt } }`,
+    variables: {userProductId, alias},
   };
 };
 
@@ -23,7 +30,7 @@ export const reGenDeviceKeyMutation = (
   return {
     operationName: 'RegenerateDeviceKeyFromDevice',
     query:
-      'mutation RegenerateDeviceKeyFromDevice($deviceKey: String!, $username: String!, $password: String!) {\r\n  regenerateDeviceKeyFromDevice(deviceKey: $deviceKey, username: $username, password: $password)\r\n}',
+      'mutation RegenerateDeviceKeyFromDevice($deviceKey: String!, $username: String!, $password: String!) {regenerateDeviceKeyFromDevice(deviceKey: $deviceKey, username: $username, password: $password)}',
     variables: {deviceKey, username: user.username, password: user.password},
   };
 };

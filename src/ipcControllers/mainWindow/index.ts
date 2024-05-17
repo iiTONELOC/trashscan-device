@@ -103,6 +103,8 @@ export interface IMainWindowIpcBridge {
     addItemToUsersDefaultList: (item: string) => Promise<IAddedItem>;
     getScannedList: () => Promise<any>;
     addItemToScannedList: (item: IAddedItem['product']) => Promise<any>;
+    // TODO: Add a handler for editing an item in the scanned list
+    editItemInScannedList: (item: IAddedItem['product']) => Promise<IAddedItem['product'] | null>;
   };
 }
 

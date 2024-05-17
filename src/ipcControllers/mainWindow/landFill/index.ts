@@ -44,6 +44,21 @@ const handlers = () => {
     fs.writeFileSync(scannedFilePath, JSON.stringify(scannedList));
     return scannedList;
   });
+  // TODO: Add a handler for editing an item in the scanned list
+  ipcMain.handle('landFill-edit-item-in-scanned-list', async (_, item: IAddedItem['product']) => {
+    // log the item to be edited for now
+    const updatedItem = await landfillAPI.editItemInDefaultList(item._id, item.productAlias);
+    if (updatedItem) {
+      const scannedList = getScannedList();
+      // eslint-disable-next-line
+      // @ts-ignore
+      const itemIndex = scannedList.findIndex(scannedItem => scannedItem._id === item._id);
+      scannedList[itemIndex] = {...scannedList[itemIndex], productAlias: item.productAlias};
+      fs.writeFileSync(scannedFilePath, JSON.stringify(scannedList));
+      return updatedItem;
+    }
+    return null;
+  });
 };
 
 export default handlers;

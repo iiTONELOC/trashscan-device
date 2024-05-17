@@ -41,6 +41,9 @@ const centralBridge: IMainWindowIpcBridge = {
     addItemToScannedList: (item: IAddedItem['product']) =>
       ipcRenderer.invoke('landFill-add-item-to-scanned-list', item),
     getScannedList: () => ipcRenderer.invoke('landFill-get-scanned-list'),
+    //TODO: Add a handler for editing an item in the scanned list
+    editItemInScannedList: (item: IAddedItem['product']) =>
+      ipcRenderer.invoke('landFill-edit-item-in-scanned-list', item),
   },
 };
 

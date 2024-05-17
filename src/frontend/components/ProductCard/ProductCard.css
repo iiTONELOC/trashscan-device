@@ -63,6 +63,34 @@ li {
   font-size: 1.25rem;
 }
 
+.card-action-span {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.card-action-span button {
+  background-color: var(--tertiary-color);
+}
+.card:first-of-type button {
+  background-color: var(--tertiary-color);
+}
+.card-action-span button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--gray-text);
+  background-color: rgba(255, 255, 255, 0.033);
+}
+
+.card-action-span button:hover {
+  background-color: var(--amber);
+  color: var(--secondary-color);
+}
+
 .not-found {
   background-color: rgb(184, 0, 0);
   border-top: 5px solid rgb(255, 27, 27) -- !important;
