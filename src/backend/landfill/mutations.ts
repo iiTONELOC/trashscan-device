@@ -15,11 +15,11 @@ export const addItemMutation = (barcode: string) => {
   };
 };
 
-export const updateAliasMutation = (userProductId: string, alias: string) => {
+export const updateAliasMutation = (userProductId: string, productAlias: string) => {
   return {
     operationName: 'UpdateAlias',
     query: `mutation UpdateAlias($userProductId: ID!, $productAlias: String) { updateUserProduct(userProductId: $userProductId, productAlias: $productAlias) { _id createdAt productAlias productData { barcode createdAt } updatedAt } }`,
-    variables: {userProductId, alias},
+    variables: {userProductId, productAlias},
   };
 };
 
